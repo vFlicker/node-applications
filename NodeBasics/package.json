@@ -1,0 +1,15 @@
+{
+  "name": "node-basics",
+  "version": "1.0.0",
+  "author": "Vladyslav Sliusar",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "fs:copy": "node src/FileSystem/copy.js",
+    "fs:create": "node src/FileSystem/create.js",
+    "fs:delete": "node src/FileSystem/delete.js",
+    "fs:list": "node src/FileSystem/list.js",
+    "fs:read": "node src/FileSystem/read.js",
+    "fs:rename": "node src/FileSystem/rename.js"
+  }
+}
