@@ -1,0 +1,24 @@
+{
+  "name": "node-basics",
+  "version": "1.0.0",
+  "author": "Vladyslav Sliusar",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "fs:copy": "node src/fileSystem/copy.js",
+    "fs:create": "node src/fileSystem/create.js",
+    "fs:delete": "node src/fileSystem/delete.js",
+    "fs:list": "node src/fileSystem/list.js",
+    "fs:read": "node src/fileSystem/read.js",
+    "fs:rename": "node src/fileSystem/rename.js",
+    "streams:read": "node src/streams/read.js",
+    "streams:write": "node src/streams/write.js",
+    "streams:transform": "node src/streams/transform.js",
+    "hash": "node src/hash/calculateHash.js",
+    "zip:compress": "node src/zip/compress.js",
+    "zip:decompress": "node src/zip/decompress.js",
+    "child-process:fork": "node src/childProcesses/fork.js",
+    "child-process:spawn": "node src/childProcesses/spawn.js",
+    "worker-threads": "node src/workerThreads/main.js"
+  }
+}
