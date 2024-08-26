@@ -13,7 +13,7 @@ async function copy(sourcePath, destinationPath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const sourcePath = resolve(modulePath, "Files/fresh.txt");
-const destinationPath = resolve(modulePath, "FilesCopy/fresh.txt");
+const sourcePath = resolve(modulePath, "files/fresh.txt");
+const destinationPath = resolve(modulePath, "filesCopy/fresh.txt");
 
 copy(sourcePath, destinationPath);

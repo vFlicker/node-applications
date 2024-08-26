@@ -13,6 +13,6 @@ async function create(filePath, content) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "Files/fresh.txt");
+const filePath = resolve(modulePath, "files/fresh.txt");
 
 create(filePath, "I am fresh and young");

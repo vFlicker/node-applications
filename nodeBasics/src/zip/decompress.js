@@ -13,7 +13,7 @@ async function decompress(sourcePath, destinationPath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const sourcePath = resolve(modulePath, "Files/archive.gz");
-const destinationPath = resolve(modulePath, "Files/fileToCompress2.txt");
+const sourcePath = resolve(modulePath, "files/archive.gz");
+const destinationPath = resolve(modulePath, "files/fileToCompress2.txt");
 
 decompress(sourcePath, destinationPath);

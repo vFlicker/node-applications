@@ -20,6 +20,6 @@ function executePythonScript(filePath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "Files/script.py");
+const filePath = resolve(modulePath, "files/script.py");
 
 executePythonScript(filePath);

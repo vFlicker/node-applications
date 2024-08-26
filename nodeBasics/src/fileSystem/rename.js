@@ -13,7 +13,7 @@ async function rename(sourcePath, destinationPath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const sourcePath = resolve(modulePath, "Files/wrongFilename.txt");
-const destinationPath = resolve(modulePath, "Files/properFilename.md");
+const sourcePath = resolve(modulePath, "files/wrongFilename.txt");
+const destinationPath = resolve(modulePath, "files/properFilename.md");
 
 rename(sourcePath, destinationPath);

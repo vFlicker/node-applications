@@ -11,6 +11,6 @@ async function read(filePath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "Files/fileToRead.txt");
+const filePath = resolve(modulePath, "files/fileToRead.txt");
 
 read(filePath);

@@ -10,6 +10,6 @@ async function write(filePath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "Files/fileToWrite.txt");
+const filePath = resolve(modulePath, "files/fileToWrite.txt");
 
 write(filePath);

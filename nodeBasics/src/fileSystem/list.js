@@ -13,6 +13,6 @@ async function list(directoryPath) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const directoryPath = resolve(modulePath, "Files");
+const directoryPath = resolve(modulePath, "files");
 
 list(directoryPath);

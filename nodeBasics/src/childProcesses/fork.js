@@ -13,6 +13,6 @@ function spawnChildProcess(filePath, args) {
 
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "Files/worker.js");
+const filePath = resolve(modulePath, "files/worker.js");
 
 spawnChildProcess(filePath, ["arg1", "arg2"]);
