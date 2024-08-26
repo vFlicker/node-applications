@@ -18,6 +18,7 @@
     "zip:compress": "node src/Zip/compress.js",
     "zip:decompress": "node src/Zip/decompress.js",
     "child-process:fork": "node src/ChildProcesses/fork.js",
-    "child-process:spawn": "node src/ChildProcesses/spawn.js"
+    "child-process:spawn": "node src/ChildProcesses/spawn.js",
+    "worker-threads": "node src/WorkerThreads/main.js"
   }
 }
