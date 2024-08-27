@@ -23,9 +23,9 @@ export class CliApplication {
   }
 
   #setupInputHandling() {
-    this.#userInterface.onInput((line) =>
-      this.#commandRegistry.processCommand(line),
-    );
+    this.#userInterface.onInput((line) => {
+      this.#commandRegistry.processCommand(line);
+    });
   }
 
   #setupExitHandling() {

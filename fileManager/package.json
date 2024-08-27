@@ -4,6 +4,9 @@
   "author": "Vladyslav Sliusar",
   "license": "ISC",
   "type": "module",
+  "imports": {
+    "#src/*": "./src/*"
+  },
   "engines": {
     "node": "^20.0.0",
     "npm": ">=10"

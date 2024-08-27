@@ -1,4 +1,5 @@
 import {
+  CdCommand,
   CliApplication,
   ExitCommand,
   HelpCommand,
@@ -12,6 +13,7 @@ function main() {
     new HelpCommand(),
     new ExitCommand(),
     new LsCommand(),
+    new CdCommand(),
   ]);
 
   cliApplication.init(process.argv);

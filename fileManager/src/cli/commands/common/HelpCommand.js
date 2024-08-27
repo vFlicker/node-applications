@@ -1,4 +1,4 @@
-import { AbstractCommand } from './AbstractCommand.js';
+import { AbstractCommand } from '../AbstractCommand.js';
 
 export class HelpCommand extends AbstractCommand {
   getName() {
