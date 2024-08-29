@@ -10,7 +10,10 @@ export class AbstractCommand {
     throw new Error('You have to implement: getName');
   }
 
-  /** @param {...string} params */
+  /**
+   * @param {...string} params
+   * @returns {Promise<string | void>}
+   */
   execute(...params) {
     throw new Error('You have to implement: execute');
   }

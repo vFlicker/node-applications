@@ -1,3 +1,6 @@
+import { readdir } from 'node:fs/promises';
+import { cwd } from 'node:process';
+
 import { AbstractCommand } from '../AbstractCommand.js';
 
 export class LsCommand extends AbstractCommand {
@@ -5,7 +8,10 @@ export class LsCommand extends AbstractCommand {
     return 'ls';
   }
 
-  execute() {
-    console.log('TODO: implement ls command');
+  async execute() {
+    const directoryPath = cwd();
+    const directoryContents = await readdir(directoryPath);
+    const list = directoryContents.join('\n');
+    return list;
   }
 }

@@ -5,7 +5,7 @@ export class ExitCommand extends AbstractCommand {
     return '.exit';
   }
 
-  execute() {
+  async execute() {
     process.exit(0);
   }
 }

@@ -29,10 +29,10 @@ export class CommandRegistry {
   }
 
   /** @param {string} line */
-  processCommand(line) {
+  async processCommand(line) {
     const { commandName, commandArguments } = CommandParser.parse(line);
     const command = this.#getCommand(commandName);
-    command.execute(...commandArguments);
+    return command.execute(...commandArguments);
   }
 
   /** @param {string} commandName */

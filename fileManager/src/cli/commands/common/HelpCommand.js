@@ -5,7 +5,15 @@ export class HelpCommand extends AbstractCommand {
     return 'help';
   }
 
-  execute() {
-    console.log('TODO: implement help command');
+  async execute() {
+    return `
+      This is file manager CLI.
+
+      Available commands:
+        - help        print this text
+        - .exit       exit the CLI
+        - ls          list files in current directory
+        - cd          change directory
+    `;
   }
 }

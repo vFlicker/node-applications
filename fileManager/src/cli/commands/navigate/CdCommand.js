@@ -1,4 +1,4 @@
-import { getCurrentModuleDirectoryPath } from '#src/shared/helpers/fileSystem.js';
+import { chdir } from 'node:process';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 
@@ -7,11 +7,7 @@ export class CdCommand extends AbstractCommand {
     return 'cd';
   }
 
-  /** @param {string} newPath */
-  execute(newPath) {
-    const modulePath = getCurrentModuleDirectoryPath();
-    console.log(
-      `TODO: implement cd command new path - ${newPath}, module path - ${modulePath}`,
-    );
+  async execute(directory = './') {
+    chdir(directory);
   }
 }
