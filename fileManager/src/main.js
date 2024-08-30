@@ -4,6 +4,7 @@ import {
   ExitCommand,
   HelpCommand,
   LsCommand,
+  UpCommand,
 } from './cli/index.js';
 
 function main() {
@@ -14,6 +15,7 @@ function main() {
     new ExitCommand(),
     new LsCommand(),
     new CdCommand(),
+    new UpCommand(),
   ]);
 
   cliApplication.init(process.argv);

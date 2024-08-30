@@ -36,8 +36,7 @@ export class CliApplication {
   #setupInputHandling() {
     this.#userInterface.onInput(async (line) => {
       try {
-        const result = await this.#commandRegistry.processCommand(line);
-        if (result) this.#userInterface.displayMessage(result);
+        await this.#commandRegistry.processCommand(line);
       } catch (error) {
         this.#userInterface.displayMessage('Operation failed');
       }

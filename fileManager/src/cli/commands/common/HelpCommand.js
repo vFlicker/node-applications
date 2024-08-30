@@ -6,7 +6,7 @@ export class HelpCommand extends AbstractCommand {
   }
 
   async execute() {
-    return `
+    console.log(`
       This is file manager CLI.
 
       Available commands:
@@ -14,6 +14,6 @@ export class HelpCommand extends AbstractCommand {
         - .exit       exit the CLI
         - ls          list files in current directory
         - cd          change directory
-    `;
+    `);
   }
 }
