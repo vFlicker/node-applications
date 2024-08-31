@@ -1,5 +1,5 @@
 {
-  "name": "file-manager",
+  "name": "cli-application",
   "version": "1.0.0",
   "author": "Vladyslav Sliusar",
   "license": "ISC",
@@ -11,7 +11,9 @@
     "node": "^20.0.0",
     "npm": ">=10"
   },
-  "scripts": {},
+  "scripts": {
+    "start": "node src/main.js"
+  },
   "devDependencies": {
     "@types/node": "22.5.0",
     "eslint": "9.9.1",
