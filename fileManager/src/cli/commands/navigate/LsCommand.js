@@ -10,8 +10,9 @@ export class LsCommand extends AbstractCommand {
   }
 
   async execute() {
-    const directoryPath = cwd();
-    const directoryContents = await this.#getDirectoryContents(directoryPath);
+    const workingDirectory = cwd();
+    const directoryContents =
+      await this.#getDirectoryContents(workingDirectory);
     const table = this.#createSortedTable(directoryContents);
     console.table(table);
   }

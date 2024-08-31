@@ -1,14 +1,11 @@
+import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+
+import { CommandParser } from './CommandParser.js';
 import { AbstractCommand } from './commands/AbstractCommand.js';
-import { CommandParser } from './parsers/CommandParser.js';
 
 export class CommandRegistry {
   /** @type {Map<string, AbstractCommand>} */
   #commands = new Map();
-  #defaultCommandName;
-
-  constructor(defaultCommandName = 'help') {
-    this.#defaultCommandName = defaultCommandName;
-  }
 
   /** @param {AbstractCommand[]} commands */
   registerCommand(commands) {
@@ -32,23 +29,12 @@ export class CommandRegistry {
   async processCommand(line) {
     const { commandName, commandArguments } = CommandParser.parse(line);
     const command = this.#getCommand(commandName);
+    if (!command) throw new InvalidInputError();
     return command.execute(...commandArguments);
   }
 
   /** @param {string} commandName */
   #getCommand(commandName) {
-    return this.#commands.get(commandName) ?? this.#getDefaultCommand();
-  }
-
-  #getDefaultCommand() {
-    const defaultCommand = this.#commands.get(this.#defaultCommandName);
-
-    if (!defaultCommand) {
-      throw new Error(
-        `The default command (${this.#defaultCommandName}) is not registered.`,
-      );
-    }
-
-    return defaultCommand;
+    return this.#commands.get(commandName);
   }
 }

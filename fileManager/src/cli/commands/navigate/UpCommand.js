@@ -8,6 +8,7 @@ export class UpCommand extends AbstractCommand {
   }
 
   async execute() {
-    chdir('../');
+    const parentDirectory = '../';
+    chdir(parentDirectory);
   }
 }

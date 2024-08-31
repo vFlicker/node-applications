@@ -7,7 +7,7 @@ export class CdCommand extends AbstractCommand {
     return 'cd';
   }
 
-  async execute(directory = './') {
-    chdir(directory);
+  async execute(directoryPath = './') {
+    chdir(directoryPath);
   }
 }

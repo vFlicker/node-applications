@@ -1,0 +1,19 @@
+import { rm } from 'node:fs/promises';
+
+import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+
+import { AbstractCommand } from '../AbstractCommand.js';
+
+export class RmCommand extends AbstractCommand {
+  getName() {
+    return 'rm';
+  }
+
+  /**
+   * @param {string} filePath
+   */
+  async execute(filePath) {
+    if (!filePath) throw new InvalidInputError();
+    await rm(filePath);
+  }
+}

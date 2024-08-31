@@ -1,10 +1,12 @@
 import { homedir } from 'node:os';
 import { chdir, cwd } from 'node:process';
 
+import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+import { ConsoleIO } from '#src/shared/libs/io/ConsoleInterface.js';
+
 import { CommandRegistry } from './CommandRegistry.js';
 import { AbstractCommand } from './commands/AbstractCommand.js';
-import { ConsoleIO } from './io/ConsoleInterface.js';
-import { UserNameExtractor } from './parsers/UserNameExtractor.js';
+import { UserNameExtractor } from './UserNameExtractor.js';
 
 export class CliApplication {
   #userName = '';
@@ -38,12 +40,21 @@ export class CliApplication {
       try {
         await this.#commandRegistry.processCommand(line);
       } catch (error) {
-        this.#userInterface.displayMessage('Operation failed');
+        this.#handleErrors(error);
       }
 
       this.#showCurrentDirectory();
       this.#userInterface.startPrompting();
     });
+  }
+
+  /** @param {unknown} error */
+  #handleErrors(error) {
+    if (error instanceof InvalidInputError) {
+      this.#userInterface.displayMessage(error.message);
+    } else {
+      this.#userInterface.displayMessage('Operation failed');
+    }
   }
 
   #showCurrentDirectory() {
