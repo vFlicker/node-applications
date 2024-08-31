@@ -4,7 +4,8 @@ import { resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { pipeline } from 'node:stream/promises';
 
-import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 
@@ -21,6 +22,6 @@ export class HashCommand extends AbstractCommand {
     const readStream = createReadStream(resolvedPath, { encoding: 'utf8' });
     const hashStream = createHash('sha256');
     await pipeline(readStream, hashStream);
-    console.log(hashStream.digest('hex'));
+    ColorPrinter.green(hashStream.digest('hex'));
   }
 }

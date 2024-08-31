@@ -1,33 +1,31 @@
 import { homedir } from 'node:os';
 import { chdir, cwd } from 'node:process';
 
-import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
-import { ConsoleIO } from '#src/shared/libs/io/ConsoleInterface.js';
+import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
+import { ConsoleIO } from '#src/shared/libs/io/index.js';
 
-import { CommandRegistry } from './CommandRegistry.js';
+import { CommandManager } from './CommandManager.js';
 import { AbstractCommand } from './commands/AbstractCommand.js';
-import { UserNameExtractor } from './UserNameExtractor.js';
 
 export class CliApplication {
   #userName = '';
   #userInterface = new ConsoleIO();
-  #commandRegistry = new CommandRegistry();
+  #commandRegistry = new CommandManager();
 
   /** @param {string[]} argv */
   init(argv) {
-    this.#userName = UserNameExtractor.extract(argv);
-    this.#showHelloMessage();
     this.#setInitialDirectory();
-    this.#showCurrentDirectory();
-    this.#setupInputHandling();
-    this.#userInterface.startPrompting();
     this.#setupExitHandling();
+    this.#setupInputHandling();
+    this.#extractUserName(argv);
+    this.#showHelloMessage();
+    this.#showCurrentDirectory();
+    this.#userInterface.startPrompting();
   }
 
   #showHelloMessage() {
-    this.#userInterface.displayMessage(
-      `Welcome to the File Manager, ${this.#userName}!`,
-    );
+    ColorPrinter.blue(`Welcome to the File Manager, ${this.#userName}!`);
   }
 
   #setInitialDirectory() {
@@ -48,17 +46,28 @@ export class CliApplication {
     });
   }
 
+  /** @param {string[]} argv */
+  #extractUserName(argv) {
+    const USERNAME_PREFIX = '--username=';
+    const DEFAULT_USERNAME = 'User';
+
+    const userNameArg = argv.find((arg) => arg.startsWith(USERNAME_PREFIX));
+    this.#userName = userNameArg
+      ? userNameArg.slice(USERNAME_PREFIX.length)
+      : DEFAULT_USERNAME;
+  }
+
   /** @param {unknown} error */
   #handleErrors(error) {
     if (error instanceof InvalidInputError) {
-      this.#userInterface.displayMessage(error.message);
+      ColorPrinter.red(error.message);
     } else {
-      this.#userInterface.displayMessage('Operation failed');
+      ColorPrinter.red('Operation failed');
     }
   }
 
   #showCurrentDirectory() {
-    this.#userInterface.displayMessage(`You are currently in ${cwd()}`);
+    ColorPrinter.log(`You are currently in ${cwd()}`);
   }
 
   #setupExitHandling() {
@@ -69,7 +78,7 @@ export class CliApplication {
   }
 
   #showGoodbyeMessage() {
-    this.#userInterface.displayMessage(
+    ColorPrinter.blue(
       `Thank you for using File Manager, ${this.#userName}, goodbye!`,
     );
   }

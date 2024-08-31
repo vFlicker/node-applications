@@ -13,11 +13,6 @@ export class ConsoleIO {
     this.#readline.on('line', callback);
   }
 
-  /** @param {string} message */
-  displayMessage(message) {
-    console.log(message);
-  }
-
   startPrompting() {
     this.#readline.prompt();
   }

@@ -1,3 +1,5 @@
+import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
+
 import { AbstractCommand } from '../AbstractCommand.js';
 
 export class HelpCommand extends AbstractCommand {
@@ -6,7 +8,7 @@ export class HelpCommand extends AbstractCommand {
   }
 
   async execute() {
-    console.log(`
+    ColorPrinter.green(`
       This is file manager CLI.
 
       Available commands categories:

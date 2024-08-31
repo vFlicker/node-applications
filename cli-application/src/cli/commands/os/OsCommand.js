@@ -1,6 +1,7 @@
 import { arch, cpus, EOL, homedir, userInfo } from 'node:os';
 
-import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 
@@ -27,14 +28,14 @@ export class OsCommand extends AbstractCommand {
   };
 
   #eolHandler() {
-    console.log('EOL:', EOL);
+    ColorPrinter.green(`EOL: ${EOL}`);
   }
 
   #cpusHandler() {
     const cpusCount = cpus().length;
     const cpusTable = this.#getCpusTable();
-    console.log(`Overall amount of CPUs: ${cpusCount}`);
-    console.table(cpusTable);
+    ColorPrinter.green(`Overall amount of CPUs: ${cpusCount}`);
+    ColorPrinter.table(cpusTable);
   }
 
   #getCpusTable() {
@@ -62,14 +63,14 @@ export class OsCommand extends AbstractCommand {
   }
 
   #homeDirHandler() {
-    console.log(`Home directory is ${homedir()}`);
+    ColorPrinter.green(`Home directory is ${homedir()}`);
   }
 
   #usernameHandler() {
-    console.log(`Username: ${userInfo().username}`);
+    ColorPrinter.green(`Username: ${userInfo().username}`);
   }
 
   #architectureHandler() {
-    console.log(`This processor architecture is ${arch()}`);
+    ColorPrinter.green(`This processor architecture is ${arch()}`);
   }
 }

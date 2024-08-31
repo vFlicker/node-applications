@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { cwd } from 'node:process';
 
-import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+import { InvalidInputError } from '#src/shared/Errors/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 

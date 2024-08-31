@@ -1,9 +1,9 @@
-import { InvalidInputError } from '#src/shared/Errors/InvalidInputError.js';
+import { InvalidInputError } from '#src/shared/Errors/index.js';
 
 import { CommandParser } from './CommandParser.js';
 import { AbstractCommand } from './commands/AbstractCommand.js';
 
-export class CommandRegistry {
+export class CommandManager {
   /** @type {Map<string, AbstractCommand>} */
   #commands = new Map();
 
@@ -30,7 +30,7 @@ export class CommandRegistry {
     const { commandName, commandArguments } = CommandParser.parse(line);
     const command = this.#getCommand(commandName);
     if (!command) throw new InvalidInputError();
-    return command.execute(...commandArguments);
+    await command.execute(...commandArguments);
   }
 
   /** @param {string} commandName */

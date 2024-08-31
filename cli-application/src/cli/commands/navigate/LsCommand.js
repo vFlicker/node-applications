@@ -2,6 +2,8 @@ import { Dirent } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { cwd } from 'node:process';
 
+import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
+
 import { AbstractCommand } from '../AbstractCommand.js';
 
 export class LsCommand extends AbstractCommand {
@@ -14,7 +16,7 @@ export class LsCommand extends AbstractCommand {
     const directoryContents =
       await this.#getDirectoryContents(workingDirectory);
     const table = this.#createSortedTable(directoryContents);
-    console.table(table);
+    ColorPrinter.table(table);
   }
 
   /** @param {string} directoryPath */
