@@ -2,7 +2,7 @@ import { Dirent } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { cwd } from 'node:process';
 
-import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
+import { ColorPrinter } from '#src/shared/libs/printer/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 

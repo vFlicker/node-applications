@@ -1,7 +1,7 @@
 import { arch, cpus, EOL, homedir, userInfo } from 'node:os';
 
 import { InvalidInputError } from '#src/shared/Errors/index.js';
-import { ColorPrinter } from '#src/shared/libs/ColorPrinter/index.js';
+import { ColorPrinter } from '#src/shared/libs/printer/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 
