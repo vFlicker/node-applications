@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { pipeline } from 'node:stream/promises';
 
-import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { InvalidInputError } from '#src/shared/errors/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 

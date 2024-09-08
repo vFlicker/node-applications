@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { chdir, cwd } from 'node:process';
 
-import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { InvalidInputError } from '#src/shared/errors/index.js';
 import { ConsoleIO } from '#src/shared/libs/io/index.js';
 import { ColorPrinter } from '#src/shared/libs/printer/index.js';
 

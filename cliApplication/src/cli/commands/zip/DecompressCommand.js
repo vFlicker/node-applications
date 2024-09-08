@@ -4,7 +4,7 @@ import { cwd } from 'node:process';
 import { pipeline } from 'node:stream/promises';
 import { createBrotliDecompress } from 'node:zlib';
 
-import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { InvalidInputError } from '#src/shared/errors/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 

@@ -1,4 +1,4 @@
-import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { InvalidInputError } from '#src/shared/errors/index.js';
 
 import { CommandParser } from './CommandParser.js';
 import { AbstractCommand } from './commands/AbstractCommand.js';

@@ -1,6 +1,6 @@
 import { rm } from 'node:fs/promises';
 
-import { InvalidInputError } from '#src/shared/Errors/index.js';
+import { InvalidInputError } from '#src/shared/errors/index.js';
 
 import { AbstractCommand } from '../AbstractCommand.js';
 
