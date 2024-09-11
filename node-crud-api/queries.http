@@ -1,0 +1,14 @@
+# Get user
+GET http://localhost:8000/user
+
+###
+
+# Get user by id
+GET http://localhost:8000/user/1
+
+###
+
+# Create user
+POST http://localhost:8000/user
+
+###
