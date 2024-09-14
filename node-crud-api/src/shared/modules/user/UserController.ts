@@ -1,4 +1,3 @@
-import { Database } from '#src/shared/libs/database/index.js';
 import {
   BaseController,
   Client,
@@ -8,14 +7,11 @@ import {
 import { User } from '#src/shared/types/index.js';
 
 import { UserDto } from './UserDto.js';
+import { UserService } from './UserService.js';
 
 export class UserController extends BaseController {
-  #database: Database;
-
-  constructor(database: Database) {
+  constructor(private readonly userService: UserService) {
     super();
-
-    this.#database = database;
 
     this.addRoute({
       path: '/api/users',
@@ -39,7 +35,7 @@ export class UserController extends BaseController {
   public async createUser(client: Client): Promise<User | undefined> {
     try {
       const userDto = await this.parseBody<UserDto>(client);
-      const createdUser = await this.#database.createUser(userDto);
+      const createdUser = await this.userService.createUser(userDto);
       return createdUser as User;
     } catch (err) {
       console.error(err);
@@ -48,7 +44,7 @@ export class UserController extends BaseController {
   }
 
   public async getAllUser(): Promise<User[]> {
-    const foundUsers = this.#database.findAllUsers();
+    const foundUsers = this.userService.findAllUsers();
     return foundUsers;
   }
 
@@ -59,7 +55,7 @@ export class UserController extends BaseController {
     if (!params) throw new Error('No params found');
 
     const userId = params[0];
-    const foundUser = await this.#database.findUserById(userId);
+    const foundUser = await this.userService.findUserById(userId);
     return foundUser;
   }
 }
