@@ -36,17 +36,18 @@ export class UserController extends BaseController {
     });
   }
 
-  public async createUser(client: Client): Promise<User> {
+  public async createUser(client: Client): Promise<User | undefined> {
     try {
       const userDto = await this.parseBody<UserDto>(client);
       const createdUser = await this.#database.createUser(userDto);
       return createdUser as User;
     } catch (err) {
       console.error(err);
+      return undefined;
     }
   }
 
-  public async getAllUser({ res }: Client): Promise<User[]> {
+  public async getAllUser(): Promise<User[]> {
     const foundUsers = this.#database.findAllUsers();
     return foundUsers;
   }
