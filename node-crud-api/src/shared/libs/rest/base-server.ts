@@ -14,11 +14,15 @@ export class BaseServer implements Server {
   public registerControllers(controllers: Controller[]) {
     this.server = http.createServer(async (req, res) => {
       const client = { req, res };
-      const routers = controllers.map((controller) => controller.router);
+      const routers = this.getRouters(controllers);
       this.routing.registerRouters(routers);
-      const result = await this.routing.processRoute(client);
-      res.end(result);
+      await this.routing.processRoute(client);
     });
+  }
+
+  private getRouters(controllers: Controller[]) {
+    const routers = controllers.map((controller) => controller.router);
+    return routers;
   }
 
   public listen(port: number) {

@@ -59,8 +59,7 @@ export abstract class BaseController implements Controller {
     this.send(client, HttpStatusCode.BadRequest, errors);
   }
 
-  public notFound(client: Client): void {
-    client.res.writeHead(HttpStatusCode.NotFound);
-    client.res.end();
+  public notFound(client: Client, errors: unknown): void {
+    this.send(client, HttpStatusCode.NotFound, errors);
   }
 }

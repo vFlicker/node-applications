@@ -8,7 +8,7 @@ import { UserDto } from './user.dto.js';
 const validCreateUserDto: UserDto = {
   username: 'New user',
   age: 20,
-  hobby: ['Programming'],
+  hobbies: ['Programming'],
 };
 
 describe('POST api/users', () => {
@@ -19,9 +19,9 @@ describe('POST api/users', () => {
       response = await request.post('/api/users').send(validCreateUserDto);
     });
 
-    // afterAll(async () => {
-    //   await request.delete(`/api/users/${response.body.id}`);
-    // });
+    afterAll(async () => {
+      await request.delete(`/api/users/${response.body.id}`);
+    });
 
     test('Should return status code 201', () => {
       expect(response.status).toBe(201);
@@ -36,25 +36,31 @@ describe('POST api/users', () => {
     });
   });
 
-  // describe('API returns error when required fields are missing', () => {
-  //   let response: Response;
+  describe('API returns error when required fields are missing', () => {
+    let response: Response;
 
-  //   beforeAll(async () => {
-  //     const invalidCreateUserDto = { hobby: [] };
-  //     response = await request.post('/api/users').send(invalidCreateUserDto);
-  //   });
+    beforeAll(async () => {
+      const invalidCreateUserDto = { hobbies: [] };
+      response = await request.post('/api/users').send(invalidCreateUserDto);
+    });
 
-  //   test('Should return status code 400', () => {
-  //     expect(response.status).toBe(400);
-  //   });
+    test('Should return status code 400', () => {
+      expect(response.status).toBe(400);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(response.body).toEqual([
-  //       { message: 'username is required' },
-  //       { message: 'age is required' },
-  //     ]);
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(response.body).toEqual([
+        {
+          field: 'username',
+          errors: ['Field "username" is required'],
+        },
+        {
+          field: 'age',
+          errors: ['Field "age" is required'],
+        },
+      ]);
+    });
+  });
 });
 
 describe('GET api/users', () => {
@@ -122,37 +128,37 @@ describe('GET api/users/{userId}', () => {
     });
   });
 
-  // describe('API returns error when user not found', () => {
-  //   let getResponse: Response;
+  describe('API returns error when user not found', () => {
+    let getResponse: Response;
 
-  //   beforeAll(async () => {
-  //     getResponse = await request.get('/api/users/123');
-  //   });
+    beforeAll(async () => {
+      getResponse = await request.get('/api/users/123');
+    });
 
-  //   test('Should return status code 404', () => {
-  //     expect(getResponse.status).toBe(404);
-  //   });
+    test('Should return status code 404', () => {
+      expect(getResponse.status).toBe(404);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(getResponse.body).toEqual({ message: 'User not found' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(getResponse.body).toEqual({ message: 'User not found' });
+    });
+  });
 
-  // describe('API returns error when userId is invalid', () => {
-  //   let getResponse: Response;
+  describe('API returns error when userId is invalid', () => {
+    let getResponse: Response;
 
-  //   beforeAll(async () => {
-  //     getResponse = await request.get('/api/users/invalid');
-  //   });
+    beforeAll(async () => {
+      getResponse = await request.get('/api/users/invalid');
+    });
 
-  //   test('Should return status code 400', () => {
-  //     expect(getResponse.status).toBe(400);
-  //   });
+    test('Should return status code 400', () => {
+      expect(getResponse.status).toBe(400);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(getResponse.body).toEqual({ message: 'Invalid id' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(getResponse.body).toEqual({ message: 'Invalid id' });
+    });
+  });
 });
 
 describe('PUT api/users/{userId}', () => {
@@ -190,41 +196,41 @@ describe('PUT api/users/{userId}', () => {
     });
   });
 
-  // describe('API returns error when user not found', () => {
-  //   let putResponse: Response;
+  describe('API returns error when user not found', () => {
+    let putResponse: Response;
 
-  //   beforeAll(async () => {
-  //     putResponse = await request
-  //       .put('/api/users/123')
-  //       .send(validCreateUserDto);
-  //   });
+    beforeAll(async () => {
+      putResponse = await request
+        .put('/api/users/123')
+        .send(validCreateUserDto);
+    });
 
-  //   test('Should return status code 404', () => {
-  //     expect(putResponse.status).toBe(404);
-  //   });
+    test('Should return status code 404', () => {
+      expect(putResponse.status).toBe(404);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(putResponse.body).toEqual({ message: 'User not found' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(putResponse.body).toEqual({ message: 'User not found' });
+    });
+  });
 
-  // describe('API returns error when userId is invalid', () => {
-  //   let putResponse: Response;
+  describe('API returns error when userId is invalid', () => {
+    let putResponse: Response;
 
-  //   beforeAll(async () => {
-  //     putResponse = await request
-  //       .put('/api/users/invalid')
-  //       .send(validCreateUserDto);
-  //   });
+    beforeAll(async () => {
+      putResponse = await request
+        .put('/api/users/invalid')
+        .send(validCreateUserDto);
+    });
 
-  //   test('Should return status code 400', () => {
-  //     expect(putResponse.status).toBe(400);
-  //   });
+    test('Should return status code 400', () => {
+      expect(putResponse.status).toBe(400);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(putResponse.body).toEqual({ message: 'Invalid id' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(putResponse.body).toEqual({ message: 'Invalid id' });
+    });
+  });
 });
 
 describe('DELETE api/users/{userId}', () => {
@@ -248,35 +254,35 @@ describe('DELETE api/users/{userId}', () => {
     });
   });
 
-  // describe('API returns error when user not found', () => {
-  //   let deleteResponse: Response;
+  describe('API returns error when user not found', () => {
+    let deleteResponse: Response;
 
-  //   beforeAll(async () => {
-  //     deleteResponse = await request.delete('/api/users/123');
-  //   });
+    beforeAll(async () => {
+      deleteResponse = await request.delete('/api/users/123');
+    });
 
-  //   test('Should return status code 404', () => {
-  //     expect(deleteResponse.status).toBe(404);
-  //   });
+    test('Should return status code 404', () => {
+      expect(deleteResponse.status).toBe(404);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(deleteResponse.body).toEqual({ message: 'User not found' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(deleteResponse.body).toEqual({ message: 'User not found' });
+    });
+  });
 
-  // describe('API returns error when userId is invalid', () => {
-  //   let deleteResponse: Response;
+  describe('API returns error when userId is invalid', () => {
+    let deleteResponse: Response;
 
-  //   beforeAll(async () => {
-  //     deleteResponse = await request.delete('/api/users/invalid');
-  //   });
+    beforeAll(async () => {
+      deleteResponse = await request.delete('/api/users/invalid');
+    });
 
-  //   test('Should return status code 400', () => {
-  //     expect(deleteResponse.status).toBe(400);
-  //   });
+    test('Should return status code 400', () => {
+      expect(deleteResponse.status).toBe(400);
+    });
 
-  //   test('Should return error message', () => {
-  //     expect(deleteResponse.body).toEqual({ message: 'Invalid id' });
-  //   });
-  // });
+    test('Should return error message', () => {
+      expect(deleteResponse.body).toEqual({ message: 'Invalid id' });
+    });
+  });
 });
