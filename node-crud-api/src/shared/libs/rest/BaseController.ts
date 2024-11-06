@@ -1,5 +1,8 @@
 import { BaseRouter } from './BaseRouter.js';
+import { HttpStatusCode } from './enums.js';
 import { Client, Controller, Route, Router } from './types.js';
+
+const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
 
 export abstract class BaseController implements Controller {
   private readonly _router: Router;
@@ -8,11 +11,11 @@ export abstract class BaseController implements Controller {
     this._router = new BaseRouter();
   }
 
-  get router() {
+  get router(): Router {
     return this._router;
   }
 
-  protected async parseBody<T>({ req }: Client): Promise<T> {
+  public async parseBody<T>({ req }: Client): Promise<T> {
     return new Promise((resolve, reject) => {
       let body = '';
 
@@ -30,7 +33,34 @@ export abstract class BaseController implements Controller {
     });
   }
 
-  public addRoute(route: Route) {
+  public addRoute(route: Route): void {
     this._router.addRoute(route);
+  }
+
+  public send<T>(client: Client, statusCode: HttpStatusCode, data: T): void {
+    client.res.writeHead(statusCode, DEFAULT_HEADERS);
+    client.res.end(JSON.stringify(data));
+  }
+
+  public created<T>(client: Client, data: T): void {
+    this.send(client, HttpStatusCode.Created, data);
+  }
+
+  public ok<T>(client: Client, data: T): void {
+    this.send(client, HttpStatusCode.Ok, data);
+  }
+
+  public noContent(client: Client): void {
+    client.res.writeHead(HttpStatusCode.NoContent);
+    client.res.end();
+  }
+
+  public badRequest(client: Client, errors: unknown): void {
+    this.send(client, HttpStatusCode.BadRequest, errors);
+  }
+
+  public notFound(client: Client): void {
+    client.res.writeHead(HttpStatusCode.NotFound);
+    client.res.end();
   }
 }
