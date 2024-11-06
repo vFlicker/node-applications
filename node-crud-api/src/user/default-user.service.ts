@@ -1,5 +1,6 @@
 import { Database } from '#src/shared/libs/database/index.js';
-import { User } from '#src/shared/types/index.js';
+
+import { User } from './user.type.js';
 
 export class DefaultUserService {
   constructor(private readonly database: Database) {

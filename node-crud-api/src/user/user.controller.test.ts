@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 import { request } from '#src/shared/libs/tests/index.js';
 
-import { UserDto } from './UserDto.js';
+import { UserDto } from './user.dto.js';
 
 const validCreateUserDto: UserDto = {
   username: 'New user',

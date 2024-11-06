@@ -1,6 +1,6 @@
 import http from 'node:http';
 
-import { BaseRouting } from './BaseRouting.js';
+import { BaseRouting } from './base-routing.js';
 import { Controller, Server } from './types.js';
 
 export class BaseServer implements Server {

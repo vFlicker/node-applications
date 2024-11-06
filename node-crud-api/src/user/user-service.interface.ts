@@ -1,6 +1,5 @@
-import { User } from '#src/shared/types/user.js';
-
-import { UserDto } from './UserDto.js';
+import { UserDto } from './user.dto.js';
+import { User } from './user.type.js';
 
 export interface UserService {
   createUser(userData: UserDto): Promise<User>;

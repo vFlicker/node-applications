@@ -1,2 +1,2 @@
-export * from './Database.js';
-export * from './InMemoryDatabase.js';
+export * from './database.interface.js';
+export * from './in-memory-database.js';

@@ -4,7 +4,7 @@ import { InMemoryDatabase } from './shared/libs/database/index.js';
 import {
   DefaultUserService,
   UserController,
-} from './shared/modules/user/index.js';
+} from './user/index.js';
 
 const bootstrap = () => {
   const config = new Config();

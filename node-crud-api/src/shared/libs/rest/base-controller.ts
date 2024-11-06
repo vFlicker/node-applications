@@ -1,4 +1,4 @@
-import { BaseRouter } from './BaseRouter.js';
+import { BaseRouter } from './base-router.js';
 import { HttpStatusCode } from './enums.js';
 import { Client, Controller, Route, Router } from './types.js';
 

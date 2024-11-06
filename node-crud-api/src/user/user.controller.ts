@@ -5,8 +5,8 @@ import {
   Params,
 } from '#src/shared/libs/rest/index.js';
 
-import { UserDto } from './UserDto.js';
-import { UserService } from './UserService.js';
+import { UserDto } from './user.dto.js';
+import { UserService } from './user-service.interface.js';
 
 export class UserController extends BaseController {
   constructor(private readonly userService: UserService) {
