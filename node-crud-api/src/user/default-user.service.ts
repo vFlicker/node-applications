@@ -1,39 +1,38 @@
 import { Database } from '#src/shared/libs/database/index.js';
+import { Repository } from '#src/shared/libs/database/index.js';
 
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 import { User } from './user.type.js';
 
 export class DefaultUserService {
-  constructor(private readonly database: Database) {
-    this.database = database;
+  private userRepository: Repository<User>;
+
+  constructor(database: Database) {
+    this.userRepository = database.getRepository<User>('users');
   }
 
-  public async createUser(userData: User) {
-    const id = this.database.users.length + 1;
-    this.database.users.push({ ...userData, id });
-    const createdUser = this.database.users.find((user) => user.id === id);
+  public async createUser(dto: CreateUserDto): Promise<User> {
+    const createdUser = await this.userRepository.add(dto);
     return createdUser;
   }
 
   public async findAllUsers() {
-    return this.database.users;
+    const users = await this.userRepository.findAll();
+    return users;
   }
 
-  public async findUserById(userId: string): Promise<User | undefined> {
-    return this.database.users.find((user) => user.id === Number(userId));
+  public async findUserById(userId: number): Promise<User | null> {
+    const user = await this.userRepository.findById(userId);
+    return user;
   }
 
-  public async updateUser(userId: string, userData: User) {
-    const userIndex = this.database.users.findIndex(
-      (user) => user.id === Number(userId),
-    );
-    this.database.users[userIndex] = { ...userData, id: Number(userId) };
-    return this.database.users[userIndex];
+  public async updateUserById(userId: number, dto: UpdateUserDto) {
+    const updatedUser = await this.userRepository.update(userId, dto);
+    return updatedUser;
   }
 
-  public async deleteUser(userId: string) {
-    const userIndex = this.database.users.findIndex(
-      (user) => user.id === Number(userId),
-    );
-    this.database.users.splice(userIndex, 1);
+  public async deleteUserById(userId: number) {
+    await this.userRepository.delete(userId);
   }
 }

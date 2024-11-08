@@ -1,5 +1,6 @@
-import { User } from '#src/shared/types/user.js';
+import { Repository } from './repository.interface.js';
+import { EntityId } from './types.js';
 
 export interface Database {
-  users: User[];
+  getRepository<T extends EntityId>(entityName: string): Repository<T>;
 }

@@ -6,9 +6,10 @@ import {
 } from '#src/shared/libs/rest/index.js';
 import { validate } from '#src/shared/libs/validator/index.js';
 
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 import { createNewUserSchema } from './schemas/create-new-user.schema.js';
 import { userIdSchema } from './schemas/user-id.schema.js';
-import { UserDto } from './user.dto.js';
 import { UserService } from './user-service.interface.js';
 
 export class UserController extends BaseController {
@@ -36,18 +37,18 @@ export class UserController extends BaseController {
     this.addRoute({
       path: 'api/users/*',
       method: HttpMethod.Put,
-      handler: this.updateUser.bind(this),
+      handler: this.updateUserById.bind(this),
     });
 
     this.addRoute({
       path: 'api/users/*',
       method: HttpMethod.Delete,
-      handler: this.deleteUser.bind(this),
+      handler: this.deleteUserById.bind(this),
     });
   }
 
   public async createUser(client: Client): Promise<void> {
-    const userDto = await this.parseBody<UserDto>(client);
+    const userDto = await this.parseBody<CreateUserDto>(client);
     const errors = validate(userDto, createNewUserSchema);
     if (errors.length > 0) {
       this.badRequest(client, errors);
@@ -78,7 +79,7 @@ export class UserController extends BaseController {
     this.ok(client, foundUser);
   }
 
-  public async updateUser(client: Client, params: Params): Promise<void> {
+  public async updateUserById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) {
@@ -92,12 +93,12 @@ export class UserController extends BaseController {
       return;
     }
 
-    const userDto = await this.parseBody<UserDto>(client);
-    const updatedUser = await this.userService.updateUser(userId!, userDto);
+    const userDto = await this.parseBody<UpdateUserDto>(client);
+    const updatedUser = await this.userService.updateUserById(userId!, userDto);
     this.ok(client, updatedUser);
   }
 
-  public async deleteUser(client: Client, params: Params): Promise<void> {
+  public async deleteUserById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) {
@@ -111,7 +112,7 @@ export class UserController extends BaseController {
       return;
     }
 
-    await this.userService.deleteUser(userId!);
+    await this.userService.deleteUserById(userId!);
     this.noContent(client);
   }
 }
