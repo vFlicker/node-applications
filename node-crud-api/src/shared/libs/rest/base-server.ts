@@ -1,10 +1,10 @@
 import http from 'node:http';
 
 import { BaseRouting } from './base-routing.js';
-import { Controller, Server } from './types.js';
+import { Controller, Routing, Server } from './types.js';
 
 export class BaseServer implements Server {
-  private readonly routing: BaseRouting;
+  private readonly routing: Routing;
   private server: http.Server | null = null;
 
   constructor() {

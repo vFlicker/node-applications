@@ -12,27 +12,27 @@ export class DefaultUserService {
     this.userRepository = database.getRepository<User>('users');
   }
 
-  public async createUser(dto: CreateUserDto): Promise<User> {
+  public async create(dto: CreateUserDto): Promise<User> {
     const createdUser = await this.userRepository.add(dto);
     return createdUser;
   }
 
-  public async findAllUsers() {
+  public async findAll() {
     const users = await this.userRepository.findAll();
     return users;
   }
 
-  public async findUserById(userId: number): Promise<User | null> {
+  public async findById(userId: number): Promise<User | null> {
     const user = await this.userRepository.findById(userId);
     return user;
   }
 
-  public async updateUserById(userId: number, dto: UpdateUserDto) {
+  public async updateById(userId: number, dto: UpdateUserDto) {
     const updatedUser = await this.userRepository.update(userId, dto);
     return updatedUser;
   }
 
-  public async deleteUserById(userId: number) {
+  public async deleteById(userId: number) {
     await this.userRepository.delete(userId);
   }
 }

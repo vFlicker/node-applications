@@ -34,7 +34,10 @@ export abstract class BaseController implements Controller {
   }
 
   public addRoute(route: Route): void {
-    this._router.addRoute(route);
+    this._router.addRoute({
+      ...route,
+      handler: route.handler.bind(this),
+    });
   }
 
   public send<T>(client: Client, statusCode: HttpStatusCode, data: T): void {

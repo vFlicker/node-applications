@@ -19,51 +19,51 @@ export class UserController extends BaseController {
     this.addRoute({
       path: '/api/users',
       method: HttpMethod.Post,
-      handler: this.createUser.bind(this),
+      handler: this.create,
     });
 
     this.addRoute({
       path: '/api/users',
       method: HttpMethod.Get,
-      handler: this.getAllUser.bind(this),
+      handler: this.getAll,
     });
 
     this.addRoute({
       path: 'api/users/*',
       method: HttpMethod.Get,
-      handler: this.getUserById.bind(this),
+      handler: this.getById,
     });
 
     this.addRoute({
       path: 'api/users/*',
       method: HttpMethod.Put,
-      handler: this.updateUserById.bind(this),
+      handler: this.updateById,
     });
 
     this.addRoute({
       path: 'api/users/*',
       method: HttpMethod.Delete,
-      handler: this.deleteUserById.bind(this),
+      handler: this.deleteById,
     });
   }
 
-  public async createUser(client: Client): Promise<void> {
+  public async create(client: Client): Promise<void> {
     const userDto = await this.parseBody<CreateUserDto>(client);
     const errors = validate(userDto, createNewUserSchema);
     if (errors.length > 0) {
       this.badRequest(client, errors);
       return;
     }
-    const createdUser = await this.userService.createUser(userDto);
+    const createdUser = await this.userService.create(userDto);
     this.created(client, createdUser);
   }
 
-  public async getAllUser(client: Client): Promise<void> {
-    const foundUsers = await this.userService.findAllUsers();
+  public async getAll(client: Client): Promise<void> {
+    const foundUsers = await this.userService.findAll();
     this.ok(client, foundUsers);
   }
 
-  public async getUserById(client: Client, params: Params): Promise<void> {
+  public async getById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) {
@@ -71,7 +71,7 @@ export class UserController extends BaseController {
       return;
     }
 
-    const foundUser = await this.userService.findUserById(userId!);
+    const foundUser = await this.userService.findById(userId!);
     if (!foundUser) {
       this.notFound(client, { message: 'User not found' });
       return;
@@ -79,7 +79,7 @@ export class UserController extends BaseController {
     this.ok(client, foundUser);
   }
 
-  public async updateUserById(client: Client, params: Params): Promise<void> {
+  public async updateById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) {
@@ -87,18 +87,18 @@ export class UserController extends BaseController {
       return;
     }
 
-    const foundUser = await this.userService.findUserById(userId!);
+    const foundUser = await this.userService.findById(userId!);
     if (!foundUser) {
       this.notFound(client, { message: 'User not found' });
       return;
     }
 
     const userDto = await this.parseBody<UpdateUserDto>(client);
-    const updatedUser = await this.userService.updateUserById(userId!, userDto);
+    const updatedUser = await this.userService.updateById(userId!, userDto);
     this.ok(client, updatedUser);
   }
 
-  public async deleteUserById(client: Client, params: Params): Promise<void> {
+  public async deleteById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) {
@@ -106,13 +106,13 @@ export class UserController extends BaseController {
       return;
     }
 
-    const foundUser = await this.userService.findUserById(userId!);
+    const foundUser = await this.userService.findById(userId!);
     if (!foundUser) {
       this.notFound(client, { message: 'User not found' });
       return;
     }
 
-    await this.userService.deleteUserById(userId!);
+    await this.userService.deleteById(userId!);
     this.noContent(client);
   }
 }
