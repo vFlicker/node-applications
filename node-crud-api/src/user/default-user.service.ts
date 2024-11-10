@@ -13,26 +13,22 @@ export class DefaultUserService {
   }
 
   public async create(dto: CreateUserDto): Promise<User> {
-    const createdUser = await this.userRepository.add(dto);
-    return createdUser;
+    return this.userRepository.add(dto);
   }
 
   public async findAll() {
-    const users = await this.userRepository.findAll();
-    return users;
+    return this.userRepository.findAll();
   }
 
   public async findById(userId: number): Promise<User | null> {
-    const user = await this.userRepository.findById(userId);
-    return user;
+    return this.userRepository.findById(userId);
   }
 
   public async updateById(userId: number, dto: UpdateUserDto) {
-    const updatedUser = await this.userRepository.update(userId, dto);
-    return updatedUser;
+    return this.userRepository.update(userId, dto);
   }
 
   public async deleteById(userId: number) {
-    await this.userRepository.delete(userId);
+    return this.userRepository.delete(userId);
   }
 }
