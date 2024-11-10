@@ -1,6 +1,6 @@
-import { EntityNotFoundError } from './errors.js';
-import { Repository } from './repository.interface.js';
-import { EntityId } from './types.js';
+import { EntityNotFoundError } from '../errors.js';
+import { Repository } from '../repository.interface.js';
+import { EntityId } from '../types.js';
 
 export class InMemoryRepository<T extends EntityId> implements Repository<T> {
   private data: T[] = [];

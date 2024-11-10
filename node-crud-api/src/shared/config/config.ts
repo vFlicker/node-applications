@@ -18,4 +18,8 @@ export class Config {
   get hostName() {
     return process.env.HOST_NAME || 'http://localhost';
   }
+
+  get hasHorizontalScaling() {
+    return process.env.HAS_HORIZONTAL_SCALING === 'true';
+  }
 }

@@ -1,7 +1,7 @@
-import { Database } from './database.interface.js';
+import { Database } from '../database.interface.js';
+import { Repository } from '../repository.interface.js';
+import { EntityId, RecordEntity } from '../types.js';
 import { InMemoryRepository } from './in-memory-repository.js';
-import { Repository } from './repository.interface.js';
-import { EntityId, RecordEntity } from './types.js';
 
 export class InMemoryDatabase implements Database {
   private repositories = new Map<string, InMemoryRepository<RecordEntity>>();
