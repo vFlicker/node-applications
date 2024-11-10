@@ -49,16 +49,19 @@ describe('POST api/users', () => {
     });
 
     test('Should return error message', () => {
-      expect(response.body).toEqual([
-        {
-          field: 'username',
-          errors: ['Field "username" is required'],
-        },
-        {
-          field: 'age',
-          errors: ['Field "age" is required'],
-        },
-      ]);
+      expect(response.body).toEqual({
+        message: 'Validation error',
+        errors: [
+          {
+            field: 'username',
+            messages: ['Field "username" is required'],
+          },
+          {
+            field: 'age',
+            messages: ['Field "age" is required'],
+          },
+        ],
+      });
     });
   });
 });

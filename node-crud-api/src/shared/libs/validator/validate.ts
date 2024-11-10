@@ -12,7 +12,7 @@ export function validate(
     const value = data[fieldName];
     const fieldErrors = validator.validate(fieldName, value);
     if (fieldErrors.length > 0) {
-      errors.push({ field: fieldName, errors: fieldErrors });
+      errors.push({ field: fieldName, messages: fieldErrors });
     }
   }
 

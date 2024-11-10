@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   BaseController,
   Client,
   HttpMethod,
+  NotFoundException,
   Params,
+  ValidationException,
 } from '#src/shared/libs/rest/index.js';
 import { validate } from '#src/shared/libs/validator/index.js';
 
@@ -49,11 +52,10 @@ export class UserController extends BaseController {
 
   public async create(client: Client): Promise<void> {
     const userDto = await this.parseBody<CreateUserDto>(client);
+
     const errors = validate(userDto, createNewUserSchema);
-    if (errors.length > 0) {
-      this.badRequest(client, errors);
-      return;
-    }
+    if (errors.length > 0) throw new ValidationException(errors);
+
     const createdUser = await this.userService.create(userDto);
     this.created(client, createdUser);
   }
@@ -65,33 +67,24 @@ export class UserController extends BaseController {
 
   public async getById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
+
     const errors = validate({ id: userId }, userIdSchema);
-    if (errors.length > 0) {
-      this.badRequest(client, { message: 'Invalid id' });
-      return;
-    }
+    if (errors.length > 0) throw new BadRequestException('Invalid id');
 
     const foundUser = await this.userService.findById(userId!);
-    if (!foundUser) {
-      this.notFound(client, { message: 'User not found' });
-      return;
-    }
+    if (!foundUser) throw new NotFoundException('User not found');
+
     this.ok(client, foundUser);
   }
 
   public async updateById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
+
     const errors = validate({ id: userId }, userIdSchema);
-    if (errors.length > 0) {
-      this.badRequest(client, { message: 'Invalid id' });
-      return;
-    }
+    if (errors.length > 0) throw new BadRequestException('Invalid id');
 
     const foundUser = await this.userService.findById(userId!);
-    if (!foundUser) {
-      this.notFound(client, { message: 'User not found' });
-      return;
-    }
+    if (!foundUser) throw new NotFoundException('User not found');
 
     const userDto = await this.parseBody<UpdateUserDto>(client);
     const updatedUser = await this.userService.updateById(userId!, userDto);
@@ -100,17 +93,12 @@ export class UserController extends BaseController {
 
   public async deleteById(client: Client, params: Params): Promise<void> {
     const userId = params && Number(params[0]);
+
     const errors = validate({ id: userId }, userIdSchema);
-    if (errors.length > 0) {
-      this.badRequest(client, { message: 'Invalid id' });
-      return;
-    }
+    if (errors.length > 0) throw new BadRequestException('Invalid id');
 
     const foundUser = await this.userService.findById(userId!);
-    if (!foundUser) {
-      this.notFound(client, { message: 'User not found' });
-      return;
-    }
+    if (!foundUser) throw new NotFoundException('User not found');
 
     await this.userService.deleteById(userId!);
     this.noContent(client);
