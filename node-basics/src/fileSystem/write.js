@@ -1,0 +1,19 @@
+import { readFile, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+async function write(fileToReadPath, fileToWrite) {
+  try {
+    const content = await readFile(fileToReadPath, { encoding: "utf8" });
+    await writeFile(fileToWrite, content);
+  } catch {
+    throw new Error("FS operation failed");
+  }
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const modulePath = dirname(__filename);
+const fileToReadPath = resolve(modulePath, "write.js");
+const fileToWrite = resolve(modulePath, "files/fileToWrite.txt");
+
+write(fileToReadPath, fileToWrite);

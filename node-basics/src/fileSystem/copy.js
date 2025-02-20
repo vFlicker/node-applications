@@ -6,7 +6,7 @@ async function copy(sourcePath, destinationPath) {
   try {
     await copyFile(sourcePath, destinationPath, constants.COPYFILE_EXCL);
     console.log("File copied");
-  } catch (err) {
+  } catch {
     throw new Error("FS operation failed");
   }
 }

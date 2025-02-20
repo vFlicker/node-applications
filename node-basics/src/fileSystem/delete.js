@@ -6,7 +6,7 @@ async function remove(filePath) {
   try {
     await rm(filePath);
     console.log("File deleted");
-  } catch (err) {
+  } catch {
     throw new Error("FS operation failed");
   }
 }

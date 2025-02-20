@@ -6,7 +6,7 @@ async function create(filePath, content) {
   try {
     await writeFile(filePath, content, { encoding: "utf8", flag: "wx" });
     console.log("File created");
-  } catch (err) {
+  } catch {
     throw new Error("FS operation failed");
   }
 }
@@ -14,5 +14,6 @@ async function create(filePath, content) {
 const __filename = fileURLToPath(import.meta.url);
 const modulePath = dirname(__filename);
 const filePath = resolve(modulePath, "files/fresh.txt");
+const fileContent = "I am fresh and young";
 
-create(filePath, "I am fresh and young");
+create(filePath, fileContent);

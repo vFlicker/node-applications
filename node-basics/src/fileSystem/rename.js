@@ -6,7 +6,7 @@ async function rename(sourcePath, destinationPath) {
   try {
     await renameFile(sourcePath, destinationPath);
     console.log("File renamed");
-  } catch (err) {
+  } catch {
     throw new Error("FS operation failed");
   }
 }

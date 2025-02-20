@@ -6,7 +6,7 @@ async function list(directoryPath) {
   try {
     const directory = await readdir(directoryPath);
     console.log(directory);
-  } catch (err) {
+  } catch {
     throw new Error("FS operation failed");
   }
 }
