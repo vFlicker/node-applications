@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 async function calculateHash(filePath) {
   const hashStream = createHash("sha256");
   const readStream = createReadStream(filePath, { encoding: "utf8" });
-  // readStream.pipe(hash); can be used instead of for loop
   for await (const chunk of readStream) hashStream.update(chunk);
   console.log(`The hash of the file is: ${hashStream.digest("hex")}`);
 }

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 async function write(filePath) {
   const writeStream = createWriteStream(filePath, { encoding: "utf8" });
+  // stdin.pipe(writeStream); can be used instead of for loop
   for await (const chunk of stdin) writeStream.write(chunk);
 }
 
