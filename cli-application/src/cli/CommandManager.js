@@ -9,9 +9,7 @@ export class CommandManager {
 
   /** @param {AbstractCommand[]} commands */
   registerCommand(commands) {
-    for (const command of commands) {
-      this.#registerSingleCommand(command);
-    }
+    for (const command of commands) this.#registerSingleCommand(command);
   }
 
   /** @param {AbstractCommand} command */

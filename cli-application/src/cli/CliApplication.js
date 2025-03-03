@@ -11,7 +11,7 @@ import { AbstractCommand } from './commands/AbstractCommand.js';
 export class CliApplication {
   #userName = '';
   #userInterface = new ConsoleIO();
-  #commandRegistry = new CommandManager();
+  #commandManager = new CommandManager();
 
   /** @param {string[]} argv */
   init(argv) {
@@ -45,7 +45,7 @@ export class CliApplication {
   #setupInputHandling() {
     this.#userInterface.onInput(async (line) => {
       try {
-        await this.#commandRegistry.processCommand(line);
+        await this.#commandManager.processCommand(line);
       } catch (error) {
         this.#handleErrors(error);
       } finally {
@@ -85,6 +85,6 @@ export class CliApplication {
 
   /** @param {AbstractCommand[]} commands */
   registerCommand(commands) {
-    this.#commandRegistry.registerCommand(commands);
+    this.#commandManager.registerCommand(commands);
   }
 }
