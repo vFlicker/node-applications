@@ -1,13 +1,13 @@
 import { parentPort, workerData } from "node:worker_threads";
 
-function nthFibonacci(n) {
-  if (n <= 1) return n;
-  return nthFibonacci(n - 1) + nthFibonacci(n - 2);
-}
-
-function sendResult() {
-  const fibonacciResult = nthFibonacci(+workerData);
+function sendFibonacciToParent() {
+  const fibonacciResult = calculateNthFibonacci(+workerData);
   parentPort.postMessage(fibonacciResult);
 }
 
-sendResult();
+function calculateNthFibonacci(n) {
+  if (n <= 1) return n;
+  return calculateNthFibonacci(n - 1) + calculateNthFibonacci(n - 2);
+}
+
+sendFibonacciToParent();

@@ -3,29 +3,29 @@ import { cpus } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-function createWorker(filePath, numberToSend) {
-  return new Promise((resolve, reject) => {
-    const worker = new Worker(filePath, { workerData: numberToSend });
-    worker.on("message", (message) => resolve(message));
-    worker.on("error", (error) => reject(error));
-  });
-}
-
 async function performCalculations(filePath) {
   const numCPUs = cpus().length;
-  const tasks = [];
+  const promises = [];
 
   for (let i = 0; i < numCPUs; i++) {
     const numberToSend = 10 + i;
-    const newTask = createWorker(filePath, numberToSend);
-    tasks.push(newTask);
+    const promiseResult = createWorker(filePath, numberToSend);
+    promises.push(promiseResult);
   }
 
-  const settledResult = await Promise.allSettled(tasks);
+  const settledResult = await Promise.allSettled(promises);
 
   return settledResult.map(({ status, value }) => {
-    if (status === "fulfilled") return { status: "resolved", data: value };
-    else return { status: "error", data: null };
+    if (status === "rejected") return { status: "error", data: null };
+    return { status: "resolved", data: value };
+  });
+}
+
+function createWorker(filePath, workerData) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(filePath, { workerData });
+    worker.on("message", (message) => resolve(message));
+    worker.on("error", (error) => reject(error));
   });
 }
 
