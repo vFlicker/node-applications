@@ -1,25 +1,29 @@
 import { spawn } from "node:child_process";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 
-function executePythonScript(filePath) {
-  const pythonProcess = spawn("python", [filePath]);
+// spawn launches a new command in a separate process without blocking
+// the main Node.js process. Use it for long-running processes
+// with large data output, such as streaming or continuous tasks.
 
-  pythonProcess.stdout.on("data", (data) => {
-    console.log(`Output: ${data}`);
+function convertVideo() {
+  const ffmpeg = spawn("ffmpeg", [
+    "-i",
+    "input.mp4",
+    "-vf",
+    "scale=1280:720",
+    "output.mp4",
+  ]);
+
+  ffmpeg.stderr.on("data", (data) => {
+    const output = data.toString();
+    if (output.includes("time=")) {
+      const time = output.match(/time=(\d+:\d+:\d+)/)[1];
+      console.log(`Current progress: ${time}`);
+    }
   });
 
-  pythonProcess.stderr.on("data", (data) => {
-    console.error(`Error: ${data}`);
-  });
-
-  pythonProcess.on("close", (code) => {
-    console.log(`Child process exited with code ${code}`);
+  ffmpeg.on("close", (code) => {
+    console.log(`FFmpeg process exited with code ${code}`);
   });
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const modulePath = dirname(__filename);
-const filePath = resolve(modulePath, "files/script.py");
-
-executePythonScript(filePath);
+convertVideo();

@@ -22,8 +22,10 @@
     "hash": "node src/hash/calculateHash.js",
     "zip:compress": "node src/zip/compress.js",
     "zip:decompress": "node src/zip/decompress.js",
-    "cp:fork": "node src/childProcesses/fork.js",
+    "cp:exec": "node src/childProcesses/exec.js",
+    "cp:execFile": "node src/childProcesses/execFile.js",
     "cp:spawn": "node src/childProcesses/spawn.js",
+    "cp:fork": "node src/childProcesses/fork.js",
     "wt": "node src/workerThreads/main.js"
   }
 }
