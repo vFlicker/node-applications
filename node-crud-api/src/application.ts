@@ -8,6 +8,7 @@ export class Application {
   private readonly server: Server;
 
   constructor(
+    private readonly host: string,
     private readonly port: number,
     private readonly userController: BaseController,
   ) {
@@ -17,6 +18,6 @@ export class Application {
   public init() {
     this.server.registerControllers([this.userController]);
     this.server.listen(this.port);
-    console.log(`Server running at http://localhost:${this.port}/`);
+    console.log(`Server running at http://${this.host}:${this.port}/`);
   }
 }

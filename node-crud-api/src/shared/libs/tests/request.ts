@@ -1,8 +1,8 @@
 import _request from 'supertest';
 
-import { Config } from '#src/shared/libs/config/config.js';
+import { RestConfig } from '#src/shared/config/index.js';
 
-const config = new Config();
+const config = new RestConfig();
 
-const host = `${config.hostName}:${config.port}`;
+const host = `${config.get('HOST_NAME')}:${config.get('PORT')}`;
 export const request = _request(host);
