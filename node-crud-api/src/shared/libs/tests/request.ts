@@ -1,6 +1,6 @@
 import _request from 'supertest';
 
-import { Config } from '#src/shared/config/config.js';
+import { Config } from '#src/shared/libs/config/config.js';
 
 const config = new Config();
 

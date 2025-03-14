@@ -12,14 +12,12 @@
     "npm": ">=10"
   },
   "scripts": {
-    "dev": "nodemon",
     "start": "npm run build && node ./dist/main.js",
     "build": "npm run clean && npm run compile",
     "clean": "rimraf dist",
     "compile": "tsc -p tsconfig.json",
     "test": "vitest",
-    "lint": "eslint src/ --ext .ts --fix",
-    "ts": "tsx"
+    "lint": "eslint src/ --ext .ts --fix"
   },
   "devDependencies": {
     "@eslint/js": "9.10.0",
@@ -31,16 +29,11 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-simple-import-sort": "12.1.1",
-    "nodemon": "3.1.4",
     "prettier": "3.3.3",
     "rimraf": "6.0.1",
     "supertest": "7.0.0",
-    "tsx": "4.19.0",
     "typescript": "5.5.4",
     "typescript-eslint": "8.4.0",
     "vitest": "2.1.1"
-  },
-  "dependencies": {
-    "dotenv": "16.4.5"
   }
 }

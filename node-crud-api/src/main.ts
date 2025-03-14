@@ -1,7 +1,7 @@
 import { Application } from './application.js';
-import { Config } from './shared/config/index.js';
+import { Config } from './shared/libs/config/index.js';
 import { InMemoryDatabase } from './shared/libs/database/index.js';
-import { DefaultUserService, UserController } from './user/index.js';
+import { DefaultUserService, UserController } from './modules/user/index.js';
 
 const config = new Config();
 
