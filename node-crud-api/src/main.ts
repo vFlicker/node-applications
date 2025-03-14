@@ -14,4 +14,3 @@ if (!config.hasHorizontalScaling) {
 } else {
   console.log('Horizontal scaling is not supported');
 }
-

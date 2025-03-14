@@ -1,8 +1,8 @@
-import { config as dotenvConfig } from 'dotenv';
+import { config } from 'dotenv';
 
 export class Config {
   constructor() {
-    const { error } = dotenvConfig();
+    const { error } = config();
 
     if (error) {
       throw new Error(

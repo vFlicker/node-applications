@@ -15,16 +15,8 @@ export class Application {
   }
 
   public init() {
-    this.initControllers();
-    this.initServer();
-    console.log(`Server running at http://localhost:${this.port}/`);
-  }
-
-  private initControllers() {
     this.server.registerControllers([this.userController]);
-  }
-
-  private initServer() {
     this.server.listen(this.port);
+    console.log(`Server running at http://localhost:${this.port}/`);
   }
 }
