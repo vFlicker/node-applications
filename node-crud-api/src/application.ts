@@ -4,20 +4,32 @@ import {
   Server,
 } from './shared/libs/rest/index.js';
 
-export class Application {
-  private readonly server: Server;
+interface AppConfig {
+  host: string;
+  port: number;
+}
 
-  constructor(
-    private readonly host: string,
-    private readonly port: number,
-    private readonly userController: BaseController,
-  ) {
-    this.server = new BaseServer();
+export class Application {
+  private readonly server: Server = new BaseServer();
+  private readonly config: AppConfig;
+  private readonly controllers: BaseController[];
+
+  constructor(config: AppConfig, controllers: BaseController[]) {
+    this.config = config;
+    this.controllers = controllers;
   }
 
   public init() {
-    this.server.registerControllers([this.userController]);
-    this.server.listen(this.port);
-    console.log(`Server running at http://${this.host}:${this.port}/`);
+    const { host, port } = this.config;
+
+    try {
+      this.server.registerControllers(this.controllers);
+      this.server.listen(port);
+    } catch (err) {
+      console.error('Error starting server:', err);
+      return;
+    }
+
+    console.log(`Server running at http://${host}:${port}/`);
   }
 }
