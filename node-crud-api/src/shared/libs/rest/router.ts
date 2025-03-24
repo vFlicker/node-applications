@@ -1,6 +1,7 @@
-import { Route, Router } from './types.js';
+import { Route } from './types.js';
 
-export class BaseRouter implements Router {
+export class Router {
+  // THINK: чи треба тут Set?
   public routes: Route[] = [];
 
   public addRoute(route: Route): void {

@@ -1,22 +1,21 @@
-import { BaseRouter } from './base-router.js';
 import { HttpStatusCode } from './enums.js';
-import { Client, Controller, Route, Router } from './types.js';
+import { Router } from './router.js';
+import { Client, Route } from './types.js';
 
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
 
-export abstract class BaseController implements Controller {
-  private readonly _router: Router;
-
-  constructor() {
-    this._router = new BaseRouter();
-  }
+export abstract class Controller {
+  private readonly _router = new Router();
 
   get router(): Router {
     return this._router;
   }
 
+  // THINK: чи є сенс використовувати async/await?
+  // THINK: чи є сенс винести це в окремий клас, чи цей метод гарний для контролера?
   public async parseBody<T>({ req }: Client): Promise<T> {
     return new Promise((resolve, reject) => {
+      // THINK: чи є сенс використовувати масив і робити Buffer.concat?
       let body = '';
 
       req.on('data', (chunk: ArrayBuffer) => (body += chunk.toString()));

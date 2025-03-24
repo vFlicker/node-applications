@@ -1,7 +1,7 @@
 import {
   BadRequestException,
-  BaseController,
   Client,
+  Controller,
   HttpMethod,
   NotFoundException,
   Params,
@@ -15,7 +15,7 @@ import { createNewUserSchema } from './schemas/create-new-user.schema.js';
 import { userIdSchema } from './schemas/user-id.schema.js';
 import { UserService } from './user-service.interface.js';
 
-export class UserController extends BaseController {
+export class UserController extends Controller {
   constructor(private readonly userService: UserService) {
     super();
 

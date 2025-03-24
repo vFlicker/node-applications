@@ -1,8 +1,4 @@
-import {
-  BaseController,
-  BaseServer,
-  Server,
-} from './shared/libs/rest/index.js';
+import { Controller, Server } from './shared/libs/rest/index.js';
 
 interface AppConfig {
   host: string;
@@ -10,16 +6,16 @@ interface AppConfig {
 }
 
 export class Application {
-  private readonly server: Server = new BaseServer();
+  private readonly server = new Server();
   private readonly config: AppConfig;
-  private readonly controllers: BaseController[];
+  private readonly controllers: Controller[];
 
-  constructor(config: AppConfig, controllers: BaseController[]) {
+  constructor(config: AppConfig, controllers: Controller[]) {
     this.config = config;
     this.controllers = controllers;
   }
 
-  public init() {
+  public init(): void {
     const { host, port } = this.config;
 
     try {

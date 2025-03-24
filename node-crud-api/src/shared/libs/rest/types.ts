@@ -16,23 +16,3 @@ export type Route = {
   method: HttpMethod;
   handler: RouteHandler;
 };
-
-export interface Router {
-  routes: Route[];
-  addRoute(route: Route): void;
-}
-
-export interface Routing {
-  registerRouters(routers: Router[]): void;
-  processRoute(client: Client): Promise<string>;
-}
-
-export interface Controller {
-  readonly router: Router;
-  addRoute(route: Route): void;
-}
-
-export interface Server {
-  registerControllers(controllers: Controller[]): void;
-  listen(port: number): void;
-}

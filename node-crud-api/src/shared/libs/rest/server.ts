@@ -1,20 +1,19 @@
-import http from 'node:http';
+import http, { ServerResponse } from 'node:http';
 
-import { BaseRouting } from './base-routing.js';
+import { Controller } from './controller.js';
 import { HttpStatusCode } from './enums.js';
 import { HttpError } from './errors/http.error.js';
 import { ValidationException } from './errors/validation.exception.js';
-import { Controller, Routing, Server } from './types.js';
+import { Router } from './router.js';
+import { Routing } from './routing.js';
 
-export class BaseServer implements Server {
-  private readonly routing: Routing;
+export class Server {
+  private readonly routing = new Routing();
   private server: http.Server | null = null;
 
-  constructor() {
-    this.routing = new BaseRouting();
-  }
+  // THINK: чи нормально, що немає конструктору?
 
-  public registerControllers(controllers: Controller[]) {
+  public registerControllers(controllers: Controller[]): void {
     this.server = http.createServer(async (req, res) => {
       const client = { req, res };
       const routers = this.getRouters(controllers);
@@ -28,12 +27,14 @@ export class BaseServer implements Server {
     });
   }
 
-  private getRouters(controllers: Controller[]) {
+  private getRouters(controllers: Controller[]): Router[] {
     const routers = controllers.map((controller) => controller.router);
     return routers;
   }
 
-  private handleHttpResponseError(res: http.ServerResponse, error: unknown) {
+  // THINK: здається, що ми не можемо в фреймворку вирішувати як обробляти помилки.
+  // ми повинні визначати таку логіку десь в іншому місці
+  private handleHttpResponseError(res: ServerResponse, error: unknown): void {
     const defaultHeaders = { 'Content-Type': 'application/json' };
 
     if (error instanceof ValidationException) {
@@ -53,7 +54,7 @@ export class BaseServer implements Server {
     res.writeHead(HttpStatusCode.InternalServerError, defaultHeaders);
   }
 
-  public listen(port: number) {
+  public listen(port: number): void {
     if (!this.server) {
       throw new Error('Cannot start server without controllers');
     }
