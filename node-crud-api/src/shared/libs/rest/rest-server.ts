@@ -1,35 +1,25 @@
-import http, { ServerResponse } from 'node:http';
+import { createServer, Server, ServerResponse } from 'node:http';
 
 import { Controller } from './controller.js';
 import { HttpStatusCode } from './enums.js';
 import { HttpError } from './errors/http.error.js';
 import { ValidationException } from './errors/validation.exception.js';
-import { Router } from './router.js';
 import { Routing } from './routing.js';
 
-export class Server {
+export class RestServer {
   private readonly routing = new Routing();
-  private server: http.Server | null = null;
-
-  // THINK: чи нормально, що немає конструктору?
+  private server: Server | null = null;
 
   public registerControllers(controllers: Controller[]): void {
-    this.server = http.createServer(async (req, res) => {
-      const client = { req, res };
-      const routers = this.getRouters(controllers);
-      this.routing.registerRouters(routers);
+    this.routing.registerRouters(controllers.map(({ router }) => router));
 
+    this.server = createServer(async (req, res) => {
       try {
-        await this.routing.processRoute(client);
-      } catch (error) {
-        this.handleHttpResponseError(res, error);
+        await this.routing.processRoute({ req, res });
+      } catch (err) {
+        this.handleHttpResponseError(res, err);
       }
     });
-  }
-
-  private getRouters(controllers: Controller[]): Router[] {
-    const routers = controllers.map((controller) => controller.router);
-    return routers;
   }
 
   // THINK: здається, що ми не можемо в фреймворку вирішувати як обробляти помилки.

@@ -1,4 +1,4 @@
-import { Controller, Server } from './shared/libs/rest/index.js';
+import { Controller, RestServer } from './shared/libs/rest/index.js';
 
 interface AppConfig {
   host: string;
@@ -6,7 +6,7 @@ interface AppConfig {
 }
 
 export class Application {
-  private readonly server = new Server();
+  private readonly server = new RestServer();
   private readonly config: AppConfig;
   private readonly controllers: Controller[];
 

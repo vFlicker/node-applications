@@ -1,4 +1,5 @@
 import { HttpStatusCode } from './enums.js';
+import { BadRequestException } from './errors/bad-request.exception.js';
 import { Router } from './router.js';
 import { Client, Route } from './types.js';
 
@@ -11,20 +12,18 @@ export abstract class Controller {
     return this._router;
   }
 
-  // THINK: чи є сенс використовувати async/await?
-  // THINK: чи є сенс винести це в окремий клас, чи цей метод гарний для контролера?
   public async parseBody<T>({ req }: Client): Promise<T> {
-    return new Promise((resolve, reject) => {
-      // THINK: чи є сенс використовувати масив і робити Buffer.concat?
-      let body = '';
+    const chunks: Buffer[] = [];
 
-      req.on('data', (chunk: ArrayBuffer) => (body += chunk.toString()));
+    return new Promise((resolve, reject) => {
+      req.on('data', (chunk) => chunks.push(chunk));
 
       req.on('end', () => {
         try {
+          const body = Buffer.concat(chunks as Uint8Array[]).toString('utf-8');
           resolve(JSON.parse(body));
-        } catch (error) {
-          reject(error);
+        } catch (err) {
+          reject(new BadRequestException('Invalid JSON'));
         }
       });
 
