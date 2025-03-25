@@ -8,7 +8,7 @@ GET http://localhost:8080/events
 
 ## Get event by id
 
-GET http://localhost:8080/events/b8f0892d-31b4-400e-988c-ef2282941448
+GET http://localhost:8080/events/251fe625-d081-40a6-bd8b-a4d22131ad41
 
 ###
 
