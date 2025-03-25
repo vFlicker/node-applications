@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Client,
   Controller,
-  HttpMethod,
   NotFoundException,
   Params,
   ValidationException,
@@ -19,35 +18,20 @@ export class UserController extends Controller {
   constructor(private readonly userService: UserService) {
     super();
 
-    this.addRoute({
-      path: '/api/users',
-      method: HttpMethod.Post,
-      handler: this.create,
+    // Example of using middleware for this controller
+    this.use(async (client, next) => {
+      console.log(`${client.req.method} ${client.req.url}`);
+      const startTime = Date.now();
+      await next();
+      console.log(`Request processed in ${Date.now() - startTime}ms`);
     });
 
-    this.addRoute({
-      path: '/api/users',
-      method: HttpMethod.Get,
-      handler: this.getAll,
-    });
-
-    this.addRoute({
-      path: 'api/users/*',
-      method: HttpMethod.Get,
-      handler: this.getById,
-    });
-
-    this.addRoute({
-      path: 'api/users/*',
-      method: HttpMethod.Put,
-      handler: this.updateById,
-    });
-
-    this.addRoute({
-      path: 'api/users/*',
-      method: HttpMethod.Delete,
-      handler: this.deleteById,
-    });
+    // Register routes using simplified API
+    this.post('/api/users', this.create);
+    this.get('/api/users', this.getAll);
+    this.get('/api/users/*', this.getById);
+    this.put('/api/users/*', this.updateById);
+    this.delete('/api/users/*', this.deleteById);
   }
 
   public async create(client: Client): Promise<void> {

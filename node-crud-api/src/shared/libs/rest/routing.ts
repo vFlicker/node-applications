@@ -1,119 +1,188 @@
 import { HttpMethod, HttpStatusCode } from './enums.js';
 import { HttpError } from './errors/http.error.js';
 import { Router } from './router.js';
-import { Client, Params, Route, RouteHandler } from './types.js';
+import {
+  Client,
+  Middleware,
+  NextFunction,
+  Params,
+  Route,
+  RouteHandler,
+} from './types.js';
 
-type StaticRoutes = Map<string, Map<HttpMethod, RouteHandler>>;
+interface StaticRoute {
+  handler: RouteHandler;
+  middlewares: Middleware[];
+}
 
-type DynamicRoute = {
+type StaticRoutes = Map<string, Map<HttpMethod, StaticRoute>>;
+
+interface DynamicRoute {
   method: HttpMethod;
   regex: RegExp;
   handler: RouteHandler;
-};
+  middlewares: Middleware[];
+}
 
-type DynamicRouteMatch = {
+interface DynamicRouteMatch {
   handler: RouteHandler;
   params: Params;
-};
-
-// THINK: ніби хочеться щоб StaticRoutes і DynamicRoute мали однаковий інтерфейс,
-// але здається, в цьому немає сенсу
+  middlewares: Middleware[];
+}
 
 export class Routing {
-  // THINK: чи є сенс використовувати однакові структури
-  // даних Map для статичних і динамічних роутів?
-  private staticRouteHandlers: StaticRoutes = new Map();
-  private dynamicRouteHandlers: DynamicRoute[] = [];
+  private staticRoutes: StaticRoutes = new Map();
+  private dynamicRoutes: DynamicRoute[] = [];
+  private globalMiddlewares: Middleware[] = [];
+
+  public use(middleware: Middleware): void {
+    this.globalMiddlewares.push(middleware);
+  }
 
   public registerRouters(routers: Router[]): void {
-    // THINK: чи є можливість позбавитись O(n^2)?
     for (const router of routers) {
+      const routerMiddlewares = router.getMiddlewares();
+
       for (const route of router.routes) {
-        this.addRoute(route);
+        this.addRoute(route, routerMiddlewares);
       }
     }
   }
 
-  private addRoute(route: Route): void {
+  private addRoute(route: Route, middlewares: Middleware[]): void {
     const isDynamicPath = this.isDynamicRoute(route.path);
-    if (isDynamicPath) this.addDynamicRoute(route);
-    else this.addStaticRoute(route);
+    if (isDynamicPath) {
+      this.addDynamicRoute(route, middlewares);
+    } else {
+      this.addStaticRoute(route, middlewares);
+    }
   }
 
   private isDynamicRoute(path: string): boolean {
     return path.includes('*');
   }
 
-  private addDynamicRoute(route: Route): void {
+  private addDynamicRoute(route: Route, middlewares: Middleware[]): void {
     const { path, method, handler } = route;
-    const regex = new RegExp(path.replaceAll('*', '(.*)'));
-    this.dynamicRouteHandlers.push({ method, regex, handler });
+    const regex = new RegExp(`^${path.replace(/\*/g, '(.*)')}$`);
+    this.dynamicRoutes.push({ method, regex, handler, middlewares });
   }
 
-  private addStaticRoute(route: Route): void {
+  private addStaticRoute(route: Route, middlewares: Middleware[]): void {
     const { path, method, handler } = route;
-    const hasPath = this.staticRouteHandlers.has(path);
-    if (!hasPath) this.staticRouteHandlers.set(path, new Map());
-
-    // THINK: без "get(path)!"
-    // я маю помилку "Object is possibly 'undefined'.ts(2532)"
-    this.staticRouteHandlers.get(path)!.set(method, handler);
-  }
-
-  public async processRoute(client: Client): Promise<string> {
-    const { url = '', method } = client.req;
-    const httpMethod = this.getHttpMethod(method);
-
-    const staticHandler = this.findStaticRouteHandler(url, httpMethod);
-    if (staticHandler) return this.executeHandler(client, staticHandler, null);
-
-    const dynamicMatch = this.findDynamicRouteMatch(url, httpMethod);
-    if (dynamicMatch) {
-      const { handler: dynamicHandler, params } = dynamicMatch;
-      return this.executeHandler(client, dynamicHandler, params);
+    if (!this.staticRoutes.has(path)) {
+      this.staticRoutes.set(path, new Map());
     }
 
-    throw new HttpError(HttpStatusCode.NotFound, `Route not found: ${url}`);
+    const routeMap = this.staticRoutes.get(path)!;
+    routeMap.set(method, { handler, middlewares });
   }
 
-  private getHttpMethod(method?: string): HttpMethod {
-    const defaultMethod = HttpMethod.Get;
-    if (!method) return defaultMethod;
-    return method.toLowerCase() as HttpMethod;
-  }
+  public async processRoute(client: Client): Promise<void> {
+    const { url = '/', method } = client.req;
+    const httpMethod = this.getHttpMethod(method);
+    const pathname = this.getPathname(url);
 
-  private findStaticRouteHandler(
-    url: string,
-    method: HttpMethod,
-  ): RouteHandler | null {
-    if (!this.staticRouteHandlers.has(url)) return null;
-    return this.staticRouteHandlers.get(url)?.get(method) ?? null;
-  }
+    let routeHandler: RouteHandler | null = null;
+    let routeParams: Params = null;
+    let routeMiddlewares: Middleware[] = [];
 
-  private findDynamicRouteMatch(
-    url: string,
-    method: HttpMethod,
-  ): DynamicRouteMatch | null {
-    for (const dynamicRoute of this.dynamicRouteHandlers) {
-      const { method: routeMethod, regex, handler } = dynamicRoute;
-      const params = url.match(regex);
-      if (params && routeMethod === method) {
-        params.shift();
-        return { handler, params };
+    // Check static routes first
+    const staticMatch = this.findStaticRouteMatch(pathname, httpMethod);
+    if (staticMatch) {
+      routeHandler = staticMatch.handler;
+      routeMiddlewares = staticMatch.middlewares;
+    } else {
+      // Check dynamic routes if no static match
+      const dynamicMatch = this.findDynamicRouteMatch(pathname, httpMethod);
+      if (dynamicMatch) {
+        routeHandler = dynamicMatch.handler;
+        routeParams = dynamicMatch.params;
+        routeMiddlewares = dynamicMatch.middlewares;
       }
     }
 
-    return null;
+    if (!routeHandler) {
+      throw new HttpError(
+        HttpStatusCode.NotFound,
+        `Route not found: ${pathname}`,
+      );
+    }
+
+    // Prepare middleware chain including globals
+    const middlewareChain = [...this.globalMiddlewares, ...routeMiddlewares];
+
+    // Execute middleware chain and final handler
+    await this.executeMiddlewareChain(client, middlewareChain, async () => {
+      await routeHandler!(client, routeParams);
+    });
   }
 
-  private async executeHandler(
+  private async executeMiddlewareChain(
     client: Client,
-    handler: RouteHandler,
-    params: Params,
-  ): Promise<string> {
-    // THINK: здається, що я взагалі нічого не повертаю з handler.
-    // Треба подивитися на метод контролеру
-    const result = await handler(client, params);
-    return JSON.stringify(result);
+    middlewares: Middleware[],
+    finalHandler: () => Promise<void>,
+  ): Promise<void> {
+    // Initialize client state object for data sharing between middlewares
+    client.state = client.state || {};
+
+    // Create middleware execution chain
+    const executeChain = async (index: number): Promise<void> => {
+      if (index >= middlewares.length) {
+        return finalHandler();
+      }
+
+      const next: NextFunction = async () => executeChain(index + 1);
+      await middlewares[index](client, next);
+    };
+
+    await executeChain(0);
+  }
+
+  private getHttpMethod(method?: string): HttpMethod {
+    if (!method) return HttpMethod.Get;
+    return method.toLowerCase() as HttpMethod;
+  }
+
+  private getPathname(url: string): string {
+    try {
+      const urlObj = new URL(url, 'http://localhost');
+      return urlObj.pathname;
+    } catch {
+      // If URL parsing fails, just return the URL as is
+      // This handles relative URLs
+      return url;
+    }
+  }
+
+  private findStaticRouteMatch(
+    pathname: string,
+    method: HttpMethod,
+  ): { handler: RouteHandler; middlewares: Middleware[] } | null {
+    const routes = this.staticRoutes.get(pathname);
+    if (!routes) return null;
+
+    const route = routes.get(method);
+    return route || null;
+  }
+
+  private findDynamicRouteMatch(
+    pathname: string,
+    method: HttpMethod,
+  ): DynamicRouteMatch | null {
+    for (const route of this.dynamicRoutes) {
+      if (route.method !== method) continue;
+
+      const params = pathname.match(route.regex);
+      if (params) {
+        params.shift(); // Remove the full match
+        return {
+          handler: route.handler,
+          params,
+          middlewares: route.middlewares,
+        };
+      }
+    }
+    return null;
   }
 }
