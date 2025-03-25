@@ -1,0 +1,25 @@
+# Events
+
+## Get all events
+
+GET http://localhost:8080/events
+
+###
+
+## Get event by id
+
+GET http://localhost:8080/events/153aee0e-6761-4ee6-8655-6c76bc9a96fd
+
+###
+
+## Create event
+
+POST http://localhost:8080/events
+Content-Type: application/json
+
+{
+    "title": "Event 1",
+    "description": "Description 1",
+    "date": "2024-11-17",
+    "image": "https://blog.hubspot.de/hubfs/Germany/Blog_images/Optimize_Marketing%20Events%20DACH%202021.jpg"
+}
