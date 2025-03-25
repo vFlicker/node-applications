@@ -1,119 +1,72 @@
-import { HttpMethod, HttpStatusCode } from './enums.js';
-import { HttpError } from './errors/http.error.js';
+import { HttpMethod } from './enums.js';
+import { NotFoundException } from './errors/not-found.exception.js';
 import { Router } from './router.js';
-import { Client, Params, Route, RouteHandler } from './types.js';
-
-type StaticRoutes = Map<string, Map<HttpMethod, RouteHandler>>;
-
-type DynamicRoute = {
-  method: HttpMethod;
-  regex: RegExp;
-  handler: RouteHandler;
-};
-
-type DynamicRouteMatch = {
-  handler: RouteHandler;
-  params: Params;
-};
-
-// THINK: ніби хочеться щоб StaticRoutes і DynamicRoute мали однаковий інтерфейс,
-// але здається, в цьому немає сенсу
+import { Client, Params, Route } from './types.js';
 
 export class Routing {
-  // THINK: чи є сенс використовувати однакові структури
-  // даних Map для статичних і динамічних роутів?
-  private staticRouteHandlers: StaticRoutes = new Map();
-  private dynamicRouteHandlers: DynamicRoute[] = [];
+  // We can use Trie data structure to optimize the routing process,
+  // but for simplicity, we will use a linear search to find the matching route.
+  private routes: Route[] = [];
 
   public registerRouters(routers: Router[]): void {
-    // THINK: чи є можливість позбавитись O(n^2)?
     for (const router of routers) {
       for (const route of router.routes) {
-        this.addRoute(route);
+        this.routes.push(this.prepareRoute(route));
       }
     }
   }
 
-  private addRoute(route: Route): void {
-    const isDynamicPath = this.isDynamicRoute(route.path);
-    if (isDynamicPath) this.addDynamicRoute(route);
-    else this.addStaticRoute(route);
+  private prepareRoute(route: Route): Route {
+    const { path } = route;
+    const isDynamic = path.includes('*');
+
+    if (isDynamic) {
+      // Create a pattern that captures segments marked with *
+      const pattern = new RegExp(`^${path.replace(/\*/g, '([^/]*)')}$`);
+      return { ...route, pattern };
+    }
+
+    return { ...route, pattern: null };
   }
 
-  private isDynamicRoute(path: string): boolean {
-    return path.includes('*');
-  }
-
-  private addDynamicRoute(route: Route): void {
-    const { path, method, handler } = route;
-    const regex = new RegExp(path.replaceAll('*', '(.*)'));
-    this.dynamicRouteHandlers.push({ method, regex, handler });
-  }
-
-  private addStaticRoute(route: Route): void {
-    const { path, method, handler } = route;
-    const hasPath = this.staticRouteHandlers.has(path);
-    if (!hasPath) this.staticRouteHandlers.set(path, new Map());
-
-    // THINK: без "get(path)!"
-    // я маю помилку "Object is possibly 'undefined'.ts(2532)"
-    this.staticRouteHandlers.get(path)!.set(method, handler);
-  }
-
-  public async processRoute(client: Client): Promise<string> {
+  public async processRoute(client: Client): Promise<string | void> {
     const { url = '', method } = client.req;
     const httpMethod = this.getHttpMethod(method);
 
-    const staticHandler = this.findStaticRouteHandler(url, httpMethod);
-    if (staticHandler) return this.executeHandler(client, staticHandler, null);
+    const route = this.findMatchingRoute(url, httpMethod);
+    if (!route) throw new NotFoundException(`Route not found: ${url}`);
 
-    const dynamicMatch = this.findDynamicRouteMatch(url, httpMethod);
-    if (dynamicMatch) {
-      const { handler: dynamicHandler, params } = dynamicMatch;
-      return this.executeHandler(client, dynamicHandler, params);
-    }
-
-    throw new HttpError(HttpStatusCode.NotFound, `Route not found: ${url}`);
+    const { handler, pattern } = route;
+    const params = pattern ? this.extractParams(url, pattern) : null;
+    await handler(client, params);
   }
 
   private getHttpMethod(method?: string): HttpMethod {
-    const defaultMethod = HttpMethod.Get;
-    if (!method) return defaultMethod;
+    if (!method) return HttpMethod.Get;
     return method.toLowerCase() as HttpMethod;
   }
 
-  private findStaticRouteHandler(
+  private findMatchingRoute(
     url: string,
-    method: HttpMethod,
-  ): RouteHandler | null {
-    if (!this.staticRouteHandlers.has(url)) return null;
-    return this.staticRouteHandlers.get(url)?.get(method) ?? null;
+    httpMethod: HttpMethod,
+  ): Route | undefined {
+    const staticRoute = this.routes.find(({ method, path, pattern }) => {
+      return !pattern && path === url && method === httpMethod;
+    });
+
+    if (staticRoute) return staticRoute;
+
+    return this.routes.find(({ method, pattern }) => {
+      if (!pattern || method !== httpMethod) return false;
+      return pattern.test(url);
+    });
   }
 
-  private findDynamicRouteMatch(
-    url: string,
-    method: HttpMethod,
-  ): DynamicRouteMatch | null {
-    for (const dynamicRoute of this.dynamicRouteHandlers) {
-      const { method: routeMethod, regex, handler } = dynamicRoute;
-      const params = url.match(regex);
-      if (params && routeMethod === method) {
-        params.shift();
-        return { handler, params };
-      }
-    }
+  private extractParams(url: string, pattern: RegExp): Params {
+    const match = url.match(pattern);
+    if (!match) return null;
 
-    return null;
-  }
-
-  private async executeHandler(
-    client: Client,
-    handler: RouteHandler,
-    params: Params,
-  ): Promise<string> {
-    // THINK: здається, що я взагалі нічого не повертаю з handler.
-    // Треба подивитися на метод контролеру
-    const result = await handler(client, params);
-    return JSON.stringify(result);
+    match.shift();
+    return match;
   }
 }

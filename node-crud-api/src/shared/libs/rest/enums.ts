@@ -1,4 +1,4 @@
-export enum HttpMethod {
+export const enum HttpMethod {
   Get = 'get',
   Post = 'post',
   Delete = 'delete',
@@ -6,7 +6,7 @@ export enum HttpMethod {
   Put = 'put',
 }
 
-export enum HttpStatusCode {
+export const enum HttpStatusCode {
   Ok = 200,
   Created = 201,
   NoContent = 204,

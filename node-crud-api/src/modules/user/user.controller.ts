@@ -20,9 +20,9 @@ export class UserController extends Controller {
 
     this.post('/api/users', this.create);
     this.get('/api/users', this.getAll);
-    this.get('api/users/*', this.getById);
-    this.put('api/users/*', this.updateById);
-    this.delete('api/users/*', this.deleteById);
+    this.get('/api/users/*', this.getById);
+    this.put('/api/users/*', this.updateById);
+    this.delete('/api/users/*', this.deleteById);
   }
 
   public async create(client: Client): Promise<void> {
