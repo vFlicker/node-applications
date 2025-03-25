@@ -8,7 +8,7 @@ export type Client = {
 };
 
 export type Params = RegExpMatchArray | null;
-type Path = string;
+export type Path = string;
 export type RouteHandler = (client: Client, params: Params) => Promise<unknown>;
 
 export type Route = {
