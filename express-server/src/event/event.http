@@ -14,7 +14,7 @@ GET http://localhost:8080/events/5f534e75-8dc7-42c4-97eb-c2fc867e3f40
 
 ## Create event
 
-POST http://localhost:8082/events
+POST http://localhost:8080/events
 Content-Type: application/json
 
 {

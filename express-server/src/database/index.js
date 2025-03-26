@@ -1,2 +1,1 @@
-export * from './database';
-export * from './HSDatabase';
+export * from './databaseClient.js';
