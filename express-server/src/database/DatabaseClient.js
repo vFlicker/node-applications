@@ -7,15 +7,15 @@ export class DatabaseClient {
     this.#ipsClient = new IPSClient(dbProcess);
   }
 
-  create(payload) {
-    return this.#ipsClient.sendRequest('create', { ...payload });
-  }
-
-  findAll() {
-    return this.#ipsClient.sendRequest('findAll');
-  }
-
-  findById(id) {
-    return this.#ipsClient.sendRequest('findById', { id });
+  getRepository(entityName) {
+    return {
+      create: (dto) =>
+        this.#ipsClient.sendRequest(entityName, 'create', { dto }),
+      findAll: () => this.#ipsClient.sendRequest(entityName, 'findAll'),
+      findById: (id) => this.#ipsClient.sendRequest(entityName, 'findById', id),
+      update: (id, dto) =>
+        this.#ipsClient.sendRequest(entityName, 'update', { id, dto }),
+      delete: (id) => this.#ipsClient.sendRequest(entityName, 'delete', { id }),
+    };
   }
 }

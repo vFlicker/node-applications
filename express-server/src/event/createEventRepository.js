@@ -1,16 +1,20 @@
-export const createEventRepository = (databaseClient) => ({
-  async add(event) {
-    const createdEvent = await databaseClient.create({ event });
-    return createdEvent;
-  },
+export const createEventRepository = (databaseClient) => {
+  const userRepository = databaseClient.getRepository('users');
 
-  async findAll() {
-    const events = await databaseClient.findAll();
-    return events;
-  },
+  return {
+    async add(event) {
+      const createdEvent = await userRepository.create({ event });
+      return createdEvent;
+    },
 
-  async findById(id) {
-    const event = await databaseClient.findById({ id });
-    return event;
-  },
-});
+    async findAll() {
+      const events = await userRepository.findAll();
+      return events;
+    },
+
+    async findById(id) {
+      const event = await userRepository.findById({ id });
+      return event;
+    },
+  };
+};

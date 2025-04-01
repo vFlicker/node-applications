@@ -2,7 +2,7 @@
 
 ## Get all events
 
-GET http://localhost:8081/events
+GET http://localhost:8080/events
 
 ###
 

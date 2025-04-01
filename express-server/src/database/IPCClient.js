@@ -5,9 +5,9 @@ export class IPSClient {
     this.#childProcess = childProcess;
   }
 
-  sendRequest(action, payload = null) {
+  sendRequest(entityName, action, payload) {
     return new Promise((resolve) => {
-      const messageForDbProcess = { action, payload };
+      const messageForDbProcess = { entityName, action, payload };
       this.#childProcess.send(messageForDbProcess);
 
       this.#childProcess.once('message', (responseFromDbProcess) => {
