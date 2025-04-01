@@ -1,1 +1,2 @@
-export * from './databaseClient.js';
+export * from './DatabaseClient.js';
+export * from './IPCManager.js';

@@ -1,20 +1,35 @@
 import { v4 as generateId } from 'uuid';
 
-const database = [];
+class Database {
+  #data = [];
 
-process.on('message', ({ action, payload }) => {
-  if (action === 'add') {
-    const created = { id: generateId(), ...payload };
-    database.push(created);
-    process.send({ ...created });
+  constructor() {
+    this.#data = [];
   }
 
-  if (action === 'findAll') {
-    process.send({ ...database });
+  create(payload) {
+    const createdRecord = { id: generateId(), ...payload };
+    this.#data.push(createdRecord);
+    return createdRecord;
   }
 
-  if (action === 'findById') {
-    const foundEvent = database.find((event) => event.id === payload);
-    process.send({ ...foundEvent });
+  findAll() {
+    return [...this.#data];
+  }
+
+  findById(id) {
+    const foundRecord = this.#data.find((event) => event.id === id);
+    return foundRecord || null;
+  }
+}
+
+const database = new Database();
+
+process.on('message', ({ action, payload, requestId }) => {
+  try {
+    const result = database[action](payload);
+    process.send({ requestId, data: result });
+  } catch (error) {
+    process.send({ requestId, error: error.message });
   }
 });

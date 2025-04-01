@@ -1,33 +1,28 @@
-import cp from 'node:child_process';
 import cluster from 'node:cluster';
 import os from 'node:os';
+import { resolve } from 'node:path';
 
 import express from 'express';
 
 import { ExitCode, PORT } from './constants.js';
-import { createDatabaseClient } from './database/index.js';
+import { DatabaseClient, IPCManager } from './database/index.js';
 import {
   createEventController,
   createEventRepository,
   createEventRouter,
 } from './event/index.js';
+import { getCurrentModuleDirectoryPath } from './helpers/index.js';
 import { corsMiddleware, errorMiddleware } from './middlewares/index.js';
 
 if (cluster.isPrimary) {
-  const currentDirname = new URL('.', import.meta.url).pathname;
-  const databasePath = `${currentDirname}/database/databaseProcess.js`;
-  const databaseProcess = cp.fork(databasePath);
+  const modulePath = getCurrentModuleDirectoryPath(import.meta.url);
+  const databasePath = resolve(modulePath, './database/databaseProcess.js');
+  const ipcManager = new IPCManager(databasePath);
 
-  const serverInstantsCount = os.cpus().length - 1;
-  for (let i = 0; i < serverInstantsCount; i++) {
-    const serverInstance = cluster.fork({ WORKER_PORT: PORT + i });
-    serverInstance.on('message', (message) => {
-      databaseProcess.send(message);
-
-      databaseProcess.on('message', (message) => {
-        serverInstance.send(message);
-      });
-    });
+  const serverWorkersCount = os.cpus().length - 1;
+  for (let i = 0; i < serverWorkersCount; i++) {
+    const serverWorker = cluster.fork({ WORKER_PORT: PORT + i });
+    ipcManager.registerWorker(serverWorker);
   }
 }
 
@@ -39,7 +34,7 @@ if (!cluster.isPrimary) {
   app.use(express.json());
   app.use(corsMiddleware);
 
-  const databaseClient = createDatabaseClient();
+  const databaseClient = new DatabaseClient();
   const eventRepository = createEventRepository(databaseClient);
   const eventController = createEventController(eventRepository);
   const eventRouter = createEventRouter(eventController);
