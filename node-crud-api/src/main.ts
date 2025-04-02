@@ -3,13 +3,11 @@ import cluster from 'node:cluster';
 import os from 'node:os';
 import { resolve } from 'node:path';
 
-import { v4 as generateId } from 'uuid';
-
 import { Application } from './application.js';
 import { DefaultUserService, UserController } from './modules/user/index.js';
 import { RestConfig } from './shared/config/index.js';
 import { getCurrentModuleDirectoryPath } from './shared/helpers/index.js';
-import { DatabaseClient } from './shared/libs/database/index.js';
+import { DatabaseClient, IPCManager } from './shared/libs/database/index.js';
 
 const config = new RestConfig();
 
@@ -33,34 +31,18 @@ if (!hasHorizontalScaling) {
   application.init();
 }
 
-type Message = {
-  requestId: string;
-  data: unknown;
-};
-
 if (hasHorizontalScaling) {
   if (cluster.isPrimary) {
     const modulePath = getCurrentModuleDirectoryPath(import.meta.url);
     const filePath = './shared/libs/database/databaseProcess.js';
     const databasePath = resolve(modulePath, filePath);
-    const databaseProcess = cp.fork(databasePath);
-    const workerRequests = new Map();
 
-    databaseProcess.on('message', ({ requestId, data }: Message) => {
-      const serverWorker = workerRequests.get(requestId);
-      if (!serverWorker) return;
-      serverWorker.send(data);
-      workerRequests.delete(requestId);
-    });
+    const ipcManager = new IPCManager(databasePath);
 
     const serverWorkersCount = os.cpus().length - 1;
     for (let i = 0; i < serverWorkersCount; i++) {
       const serverWorker = cluster.fork({ WORKER_PORT: appConfig.port + i });
-      serverWorker.on('message', (messageFromDbClient) => {
-        const requestId = generateId();
-        workerRequests.set(requestId, serverWorker);
-        databaseProcess.send({ ...messageFromDbClient, requestId });
-      });
+      ipcManager.registerWorker(serverWorker);
     }
   }
 

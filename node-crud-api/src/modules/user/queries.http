@@ -11,7 +11,7 @@ Content-Type: application/json
 ###
 
 # Get all users
-GET http://localhost:8000/api/users
+GET http://localhost:8001/api/users
 
 ###
 

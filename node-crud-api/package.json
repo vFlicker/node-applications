@@ -37,6 +37,7 @@
     "vitest": "2.1.1"
   },
   "dependencies": {
-    "dotenv": "16.4.7"
+    "dotenv": "16.4.7",
+    "uuid": "11.1.0"
   }
 }

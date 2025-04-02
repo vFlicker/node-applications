@@ -1,6 +1,6 @@
 import cp from 'node:child_process';
 
-import { Repository } from './databaseProcess.js';
+import { Repository } from './types.js';
 
 type EntityId = { id: number };
 

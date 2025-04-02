@@ -1,2 +1,3 @@
 export * from './DatabaseClient.js';
-export * from './databaseProcess.js';
+export * from './IPCManager.js';
+export * from './types.js';
