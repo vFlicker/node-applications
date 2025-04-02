@@ -1,5 +1,4 @@
-import { Database } from '#src/shared/libs/database/index.js';
-import { Repository } from '#src/shared/libs/database/index.js';
+import { DatabaseClient, Repository } from '#src/shared/libs/database/index.js';
 
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -8,12 +7,12 @@ import { User } from './user.type.js';
 export class DefaultUserService {
   private userRepository: Repository<User>;
 
-  constructor(database: Database) {
+  constructor(database: DatabaseClient) {
     this.userRepository = database.getRepository<User>('users');
   }
 
   public async create(dto: CreateUserDto): Promise<User> {
-    return this.userRepository.add(dto);
+    return this.userRepository.create(dto);
   }
 
   public async findAll() {
