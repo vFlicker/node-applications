@@ -1,19 +1,19 @@
-import cp from 'node:child_process';
+import { ChildProcess, Serializable } from 'node:child_process';
 import { Worker } from 'node:cluster';
 
 import { v4 as generateId } from 'uuid';
 
 type Message = {
   requestId: string;
-  data: cp.Serializable;
+  data: Serializable;
 };
 
 export class IPCManager {
-  private databaseProcess: cp.ChildProcess;
+  private databaseProcess: ChildProcess;
   private workerRequests = new Map<string, Worker>();
 
-  constructor(databasePath: string) {
-    this.databaseProcess = cp.fork(databasePath);
+  constructor(databaseProcess: ChildProcess) {
+    this.databaseProcess = databaseProcess;
 
     this.databaseProcess.on('message', ({ requestId, data }: Message) => {
       const serverWorker = this.workerRequests.get(requestId);

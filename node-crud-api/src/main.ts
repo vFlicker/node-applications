@@ -1,12 +1,10 @@
-import cp from 'node:child_process';
 import cluster from 'node:cluster';
 import os from 'node:os';
-import { resolve } from 'node:path';
 
 import { Application } from './application.js';
 import { DefaultUserService, UserController } from './modules/user/index.js';
 import { RestConfig } from './shared/config/index.js';
-import { getCurrentModuleDirectoryPath } from './shared/helpers/index.js';
+import { createDatabaseProcess } from './shared/libs/database/createDatabaseProcess.js';
 import { DatabaseClient, IPCManager } from './shared/libs/database/index.js';
 
 const config = new RestConfig();
@@ -18,10 +16,7 @@ const appConfig = {
 };
 
 if (!hasHorizontalScaling) {
-  const modulePath = getCurrentModuleDirectoryPath(import.meta.url);
-  const filePath = './shared/libs/database/databaseProcess.js';
-  const databasePath = resolve(modulePath, filePath);
-  const databaseProcess = cp.fork(databasePath);
+  const databaseProcess = createDatabaseProcess();
   const inMemoryDatabase = new DatabaseClient(databaseProcess);
   const userService = new DefaultUserService(inMemoryDatabase);
   const userController = new UserController(userService);
@@ -33,11 +28,8 @@ if (!hasHorizontalScaling) {
 
 if (hasHorizontalScaling) {
   if (cluster.isPrimary) {
-    const modulePath = getCurrentModuleDirectoryPath(import.meta.url);
-    const filePath = './shared/libs/database/databaseProcess.js';
-    const databasePath = resolve(modulePath, filePath);
-
-    const ipcManager = new IPCManager(databasePath);
+    const databaseProcess = createDatabaseProcess();
+    const ipcManager = new IPCManager(databaseProcess);
 
     const serverWorkersCount = os.cpus().length - 1;
     for (let i = 0; i < serverWorkersCount; i++) {
