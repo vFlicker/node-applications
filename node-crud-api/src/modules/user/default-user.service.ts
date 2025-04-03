@@ -20,14 +20,14 @@ export class DefaultUserService {
   }
 
   public async findById(userId: number): Promise<User | null> {
-    return this.userRepository.findById(userId);
+    return this.userRepository.findById({ id: userId });
   }
 
   public async updateById(userId: number, dto: UpdateUserDto) {
-    return this.userRepository.update(userId, dto);
+    return this.userRepository.update({ id: userId }, dto);
   }
 
   public async deleteById(userId: number) {
-    return this.userRepository.delete(userId);
+    return this.userRepository.delete({ id: userId });
   }
 }
