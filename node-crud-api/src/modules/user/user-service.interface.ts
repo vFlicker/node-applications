@@ -5,7 +5,7 @@ import { User } from './user.type.js';
 export interface UserService {
   create(dto: CreateUserDto): Promise<User>;
   findAll(): Promise<User[]>;
-  findById(userId: number): Promise<User | null>;
-  updateById(userId: number, dto: UpdateUserDto): Promise<User>;
-  deleteById(userId: number): Promise<void>;
+  findById(userId: string): Promise<User | null>;
+  updateById(userId: string, dto: UpdateUserDto): Promise<User>;
+  deleteById(userId: string): Promise<void>;
 }

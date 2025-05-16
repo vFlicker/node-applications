@@ -1,31 +1,34 @@
+import { randomUUID } from 'node:crypto';
+
 import {
+  Collection,
+  CollectionAction,
+  CollectionName,
   EntityId,
   Payload,
   RecordEntity,
-  Repository,
-  RepositoryAction,
+  WorkerMessage,
 } from './types.js';
 
 class EntityNotFoundError extends Error {
-  constructor(id: number) {
+  constructor(id: EntityId['id']) {
     super(`Entity with id ${id} not found.`);
     this.name = 'EntityNotFoundError';
   }
 }
 
-class InMemoryRepository<T extends EntityId> implements Repository<T> {
+class InMemoryCollection<T extends EntityId> implements Collection<T> {
   private data: T[] = [];
-  private idCounter = 0;
 
   public async create(entity: Omit<T, 'id'>): Promise<T> {
-    const id = (this.idCounter += 1);
+    const id = randomUUID();
     const newEntity = { ...entity, id } as T;
     this.data.push(newEntity);
     return newEntity;
   }
 
   public async findAll(): Promise<T[]> {
-    return [...this.data];
+    return this.data;
   }
 
   public async findById({ id }: EntityId): Promise<T | null> {
@@ -35,7 +38,7 @@ class InMemoryRepository<T extends EntityId> implements Repository<T> {
   public async delete({ id }: EntityId): Promise<void> {
     const index = this.data.findIndex((item) => item.id === id);
     if (index !== -1) this.data.splice(index, 1);
-    else throw new EntityNotFoundError(id);
+    throw new EntityNotFoundError(id);
   }
 
   public async update({ id }: EntityId, updatedData: Partial<T>): Promise<T> {
@@ -44,46 +47,55 @@ class InMemoryRepository<T extends EntityId> implements Repository<T> {
       const updatedEntity = { ...this.data[index], ...updatedData } as T;
       this.data[index] = updatedEntity;
       return updatedEntity;
-    } else {
-      throw new EntityNotFoundError(id);
     }
+
+    throw new EntityNotFoundError(id);
   }
 }
 
 class InMemoryDatabase {
-  private repositories = new Map<string, InMemoryRepository<RecordEntity>>();
+  private collection = new Map<
+    CollectionName,
+    InMemoryCollection<RecordEntity>
+  >();
 
-  public getRepository<T extends EntityId>(entityName: string): Repository<T> {
-    if (!this.repositories.has(entityName)) {
-      const inMemoryRepository = new InMemoryRepository<T>();
-      this.repositories.set(entityName, inMemoryRepository);
+  public getCollection<T extends EntityId>(
+    name: CollectionName,
+  ): Collection<T> {
+    if (!this.collection.has(name)) {
+      const inMemoryCollection = new InMemoryCollection<T>();
+      this.collection.set(name, inMemoryCollection);
     }
-    return this.repositories.get(entityName) as Repository<T>;
+
+    return this.collection.get(name) as Collection<T>;
   }
 
-  handleRequest<A extends RepositoryAction, T extends EntityId>(
-    entityName: string,
+  handleRequest<A extends CollectionAction, T extends EntityId>(
+    collectionName: CollectionName,
     action: A,
     payload: Payload<A, T>,
   ) {
-    const repository = this.getRepository(entityName);
-    if (!repository || typeof repository[action] !== 'function') {
-      throw new Error(`Unknown action: ${action} for entity: ${entityName}`);
+    const collection = this.getCollection(collectionName);
+    if (!collection) {
+      throw new Error(`Collection ${collectionName} not found.`);
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return repository[action](...payload);
+    return collection[action](...payload);
   }
 }
 
 const database = new InMemoryDatabase();
 
-process.on('message', async ({ action, entityName, payload, requestId }) => {
-  try {
-    const result = await database.handleRequest(entityName, action, payload);
-    process.send?.({ requestId, data: result });
-  } catch (error) {
-    process.send?.({ requestId, error });
-  }
-});
+process.on(
+  'message',
+  async ({ collection, action, payload, requestId }: WorkerMessage) => {
+    try {
+      const result = await database.handleRequest(collection, action, payload);
+      process.send?.({ requestId, data: result });
+    } catch (error) {
+      process.send?.({ requestId, error });
+    }
+  },
+);

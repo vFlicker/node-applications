@@ -1,4 +1,10 @@
-import { DbProcess, EntityId, Payload, RepositoryAction } from './types.js';
+import {
+  CollectionAction,
+  CollectionName,
+  DbProcess,
+  EntityId,
+  Payload,
+} from './types.js';
 
 export class IPCClient {
   private readonly dbProcess: DbProcess;
@@ -7,17 +13,14 @@ export class IPCClient {
     this.dbProcess = childProcess;
   }
 
-  sendRequest<A extends RepositoryAction, T extends EntityId>(
-    entityName: string,
+  sendRequest<A extends CollectionAction, T extends EntityId>(
+    collection: CollectionName,
     action: A,
     ...payload: Payload<A, T>
-  ) {
+  ): Promise<unknown> {
     return new Promise((resolve) => {
-      this.dbProcess.once('message', (responseFromDbProcess) => {
-        resolve(responseFromDbProcess);
-      });
-
-      this.dbProcess.send?.({ entityName, action, payload });
+      this.dbProcess.once('message', (dbResponse) => resolve(dbResponse));
+      this.dbProcess.send?.({ collection, action, payload });
     });
   }
 }

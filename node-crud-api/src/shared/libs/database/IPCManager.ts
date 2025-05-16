@@ -1,21 +1,17 @@
-import { ChildProcess, Serializable } from 'node:child_process';
+import { ChildProcess } from 'node:child_process';
 import { Worker } from 'node:cluster';
+import { randomUUID } from 'node:crypto';
 
-import { v4 as generateId } from 'uuid';
-
-type Message = {
-  requestId: string;
-  data: Serializable;
-};
+import { DbRequest, DbResponse, RequestId } from './types.js';
 
 export class IPCManager {
   private databaseProcess: ChildProcess;
-  private workerRequests = new Map<string, Worker>();
+  private workerRequests = new Map<RequestId, Worker>();
 
   constructor(databaseProcess: ChildProcess) {
     this.databaseProcess = databaseProcess;
 
-    this.databaseProcess.on('message', ({ requestId, data }: Message) => {
+    this.databaseProcess.on('message', ({ requestId, data }: DbResponse) => {
       const serverWorker = this.workerRequests.get(requestId);
       if (!serverWorker) return;
       serverWorker.send(data);
@@ -23,11 +19,11 @@ export class IPCManager {
     });
   }
 
-  registerWorker(serverWorker: Worker) {
-    serverWorker.on('message', (messageFromDbClient) => {
-      const requestId = generateId();
+  registerWorker(serverWorker: Worker): void {
+    serverWorker.on('message', (dbRequest: DbRequest) => {
+      const requestId = randomUUID();
       this.workerRequests.set(requestId, serverWorker);
-      this.databaseProcess.send({ ...messageFromDbClient, requestId });
+      this.databaseProcess.send({ ...dbRequest, requestId });
     });
   }
 }

@@ -41,7 +41,7 @@ export class UserController extends Controller {
   }
 
   public async getById(client: Client, params: Params): Promise<void> {
-    const userId = params && Number(params[0]);
+    const userId = params && params[0];
 
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) throw new BadRequestException('Invalid id');
@@ -53,7 +53,7 @@ export class UserController extends Controller {
   }
 
   public async updateById(client: Client, params: Params): Promise<void> {
-    const userId = params && Number(params[0]);
+    const userId = params && params[0];
 
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) throw new BadRequestException('Invalid id');
@@ -67,7 +67,7 @@ export class UserController extends Controller {
   }
 
   public async deleteById(client: Client, params: Params): Promise<void> {
-    const userId = params && Number(params[0]);
+    const userId = params && params[0];
 
     const errors = validate({ id: userId }, userIdSchema);
     if (errors.length > 0) throw new BadRequestException('Invalid id');
