@@ -14,7 +14,7 @@ export class IPCManager {
     this.databaseProcess.on('message', ({ requestId, data }: DbResponse) => {
       const serverWorker = this.workerRequests.get(requestId);
       if (!serverWorker) return;
-      serverWorker.send(data);
+      serverWorker.send(data ?? null);
       this.workerRequests.delete(requestId);
     });
   }

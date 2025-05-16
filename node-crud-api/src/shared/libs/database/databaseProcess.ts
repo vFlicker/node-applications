@@ -80,9 +80,11 @@ class InMemoryDatabase {
       throw new Error(`Collection ${collectionName} not found.`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return collection[action](...payload);
+    const method = collection[action] as (
+      ...args: Payload<A, T>
+    ) => ReturnType<Collection<T>[A]>;
+
+    return method.apply(collection, payload);
   }
 }
 
