@@ -1,133 +1,37 @@
-# CLI application
+# CLI Application
 
-## Downloading
+This project is a simple command-line interface (CLI) application built with Node.js. It demonstrates the implementation of various CLI commands for file system operations, navigation, hashing, OS info, and more.
 
-```
-git clone {repository URL}
-```
+## Structure
 
-## Installing NPM modules
+- **src/cli/** — Core CLI logic, including command parsing and management
+  - **commands/** — Implementations of individual commands (file system, hash, navigation, etc.)
+  - **common/** — Common commands (Help, Exit)
+  - **fileSystem/** — File system commands (Add, Cat, Cp, Mv, Rm, Rn)
+  - **hash/** — Hash command
+  - **navigate/** — Navigation commands (Cd, Ls, Up)
+  - **os/** — OS-related commands
+  - **zip/** — Zip commands
+- **src/shared/** — Shared libraries and error handling
 
-```
+## Usage
+
+Install dependencies:
+
+```bash
 npm install
 ```
 
-## Running application
+Run the CLI application:
 
-```
+```bash
 npm run start -- --username=your_username
 ```
 
-## Examples of using commands
+You can then enter supported commands as described in the application's help output. Example commands:
 
-### Navigation & working directory
-
-Go upper from current directory
-
-```
-up
-```
-
-Go to dedicated folder from current directory
-
-```
-cd path_to_directory
-```
-
-List all files and folder in current directory
-
-```
-ls
-```
-
-### Operations with files
-
-Read file
-
-```
-cat path_to_file
-```
-
-Create empty file in current working directory
-
-```
-add new_file_name
-```
-
-Rename file
-
-```
-rn path_to_file new_filename
-```
-
-Copy file
-
-```
-cp path_to_file path_to_new_directory
-```
-
-Move file
-
-```
-mv path_to_file path_to_new_directory
-```
-
-Delete file
-
-```
-rm path_to_file
-```
-
-### Operating system
-
-Get EOL
-
-```
-os --EOL
-```
-
-Get host machine CPUs info
-
-```
-os --cpus
-```
-
-Get home directory
-
-```
-os --homedir
-```
-
-Get current system user name
-
-```
-os --username
-```
-
-Get CPU architecture
-
-```
-os --architecture
-```
-
-### Hash
-
-Calculate hash for file
-
-```
-hash path_to_file
-```
-
-### Zip
-
-Compress file
-
-```
-compress path_to_file path_to_destination
-```
-
-Decompress file
-
-```
-decompress path_to_file path_to_destination
-```
+- Navigation: `up`, `cd <path>`, `ls`
+- File operations: `cat <file>`, `add <file>`, `rn <file> <newname>`, `cp <file> <dest>`, `mv <file> <dest>`, `rm <file>`
+- OS info: `os --EOL`, `os --cpus`, `os --homedir`, `os --username`, `os --architecture`
+- Hash: `hash <file>`
+- Zip: `compress <file> <dest>`, `decompress <file> <dest>`
