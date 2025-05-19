@@ -1,0 +1,39 @@
+{
+  "name": "websocket-remote-control",
+  "version": "1.0.0",
+  "author": "Vladyslav Sliusar",
+  "license": "ISC",
+  "type": "module",
+  "imports": {
+    "#src/*": "./dist/*"
+  },
+  "engines": {
+    "node": "^20.0.0",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "start": "npm run build && node ./dist/main.js",
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf dist",
+    "compile": "tsc -p tsconfig.json",
+    "lint": "eslint src/ --ext .ts --fix"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "4.2.6",
+    "ws": "8.18.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.10.0",
+    "@types/node": "22.5.4",
+    "@typescript-eslint/eslint-plugin": "8.4.0",
+    "@typescript-eslint/parser": "8.4.0",
+    "eslint": "9.10.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "prettier": "3.3.3",
+    "rimraf": "6.0.1",
+    "typescript": "5.5.4",
+    "typescript-eslint": "8.4.0"
+  }
+}
