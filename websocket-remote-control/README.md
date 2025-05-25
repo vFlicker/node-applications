@@ -1,42 +1,24 @@
-# WebSocket remote control
+# WebSocket Remote Control
 
-## Downloading
+This is a Node.js application for remote control via WebSocket, supporting mouse movement, drawing, and screenshots.
 
-```
-git clone {repository URL}
-```
+## Usage
 
-## Installing NPM modules
+Install dependencies:
 
-```
+```bash
 npm install
 ```
 
-## Running application (development mode)
+Run the CLI application:
 
-```
-npm run start:dev
-```
-
-## Running application (production mode)
-
-```
-npm run start:prod
+```bash
+npm run start
 ```
 
-## About application
+## Features
 
-### Mouse
-
-- Press "Up", "Right", "Down", "Left" to move the mouse cursor in the corresponding direction
-- Press "P" to get the mouse position in px
-
-### Drawing
-
-- Press "C" to draw a circle
-- Press "S" to draw a square
-- Press "R" to draw a rectangular
-
-### Screenshot
-
-- Press "LCtrl" + "P" to take a screenshot
+- Move mouse cursor with keyboard commands (Up, Right, Down, Left)
+- Get mouse position (P)
+- Draw shapes: circle (C), square (S), rectangle (R)
+- Take a screenshot (LCtrl + P)
