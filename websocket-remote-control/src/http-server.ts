@@ -16,12 +16,12 @@ type HttpServerConfig = {
 
 export const createHttpServer = ({ hostname, port }: HttpServerConfig) => {
   const server = createServer(async ({ url }, res) => {
-    const currentFile = url === ROOT_DIRECTORY ? DEFAULT_FILE : url;
-    const currentFilePath = join(STATIC_DIRECTORY, currentFile || DEFAULT_FILE);
-    const filePath = resolveFilePath(currentFilePath);
+    const fileName = url === ROOT_DIRECTORY ? DEFAULT_FILE : url;
+    const filePath = join(STATIC_DIRECTORY, fileName || DEFAULT_FILE);
+    const resolvedFilePath = resolveFilePath(filePath);
 
     try {
-      const data = await readFile(filePath);
+      const data = await readFile(resolvedFilePath);
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(data);
     } catch {
@@ -31,8 +31,7 @@ export const createHttpServer = ({ hostname, port }: HttpServerConfig) => {
   });
 
   server.listen(port, hostname, () => {
-    const message = `Http server listening on http://${hostname}:${port}/`;
-    log(message, 'success');
+    log(`Http server listening on http://${hostname}:${port}/`, 'success');
   });
 
   return server;
