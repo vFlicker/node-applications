@@ -2,7 +2,7 @@ import { stdin, stdout } from "node:process";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
-async function transform() {
+async function reverseText() {
   const options = {
     transform(chunk, _encoding, callback) {
       const symbols = chunk.toString().split("");
@@ -16,4 +16,4 @@ async function transform() {
   await pipeline(stdin, transformStream, stdout);
 }
 
-transform();
+reverseText();

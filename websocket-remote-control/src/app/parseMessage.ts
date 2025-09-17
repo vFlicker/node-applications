@@ -5,6 +5,6 @@ export const parseMessage = (data: string): Action => {
 
   return {
     commandName,
-    payload: coords.map(Number),
+    payload: coords.map((coord) => Number(coord)),
   };
 };

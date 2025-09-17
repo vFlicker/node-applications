@@ -30,13 +30,8 @@ export class MvCommand extends AbstractCommand {
    * @param {string} directoryPath
    */
   async #moveFile(sourcePath, directoryPath) {
-    const readStream = createReadStream(sourcePath, {
-      encoding: 'utf8',
-    });
-    const writeStream = createWriteStream(directoryPath, {
-      encoding: 'utf8',
-    });
-
+    const readStream = createReadStream(sourcePath, { encoding: 'utf8' });
+    const writeStream = createWriteStream(directoryPath, { encoding: 'utf8' });
     await pipeline(readStream, writeStream);
     await rm(sourcePath);
   }

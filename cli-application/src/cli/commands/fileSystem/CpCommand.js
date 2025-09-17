@@ -29,13 +29,8 @@ export class CpCommand extends AbstractCommand {
    * @param {string} directoryPath
    */
   async #copyFile(sourcePath, directoryPath) {
-    const readStream = createReadStream(sourcePath, {
-      encoding: 'utf8',
-    });
-    const writeStream = createWriteStream(directoryPath, {
-      encoding: 'utf8',
-    });
-
+    const readStream = createReadStream(sourcePath, { encoding: 'utf8' });
+    const writeStream = createWriteStream(directoryPath, { encoding: 'utf8' });
     await pipeline(readStream, writeStream);
   }
 }

@@ -26,13 +26,8 @@ export class CommandManager {
   /** @param {string} line */
   async processCommand(line) {
     const { commandName, commandArguments } = CommandParser.parse(line);
-    const command = this.#getCommand(commandName);
+    const command = this.#commands.get(commandName);
     if (!command) throw new InvalidInputError();
     await command.execute(...commandArguments);
-  }
-
-  /** @param {string} commandName */
-  #getCommand(commandName) {
-    return this.#commands.get(commandName);
   }
 }

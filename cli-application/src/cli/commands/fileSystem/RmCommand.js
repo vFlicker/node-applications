@@ -9,9 +9,7 @@ export class RmCommand extends AbstractCommand {
     return 'rm';
   }
 
-  /**
-   * @param {string} filePath
-   */
+  /** @param {string} filePath */
   async execute(filePath) {
     if (!filePath) throw new InvalidInputError();
     await rm(filePath);
