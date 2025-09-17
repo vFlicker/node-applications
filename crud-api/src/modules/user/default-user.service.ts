@@ -3,8 +3,9 @@ import { Collection, DatabaseClient } from '#src/shared/libs/database/index.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { User } from './user.type.js';
+import { UserService } from './user-service.interface.js';
 
-export class DefaultUserService {
+export class DefaultUserService implements UserService {
   private userCollection: Collection<User>;
 
   constructor(database: DatabaseClient) {

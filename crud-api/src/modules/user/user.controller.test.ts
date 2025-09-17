@@ -135,7 +135,9 @@ describe('GET api/users/{userId}', () => {
     let getResponse: Response;
 
     beforeAll(async () => {
-      getResponse = await request.get('/api/users/123');
+      getResponse = await request.get(
+        '/api/users/070aaef9-45be-4650-8f4d-abea4f2ebdc5',
+      );
     });
 
     test('Should return status code 404', () => {
@@ -204,7 +206,7 @@ describe('PUT api/users/{userId}', () => {
 
     beforeAll(async () => {
       putResponse = await request
-        .put('/api/users/123')
+        .put('/api/users/070aaef9-45be-4650-8f4d-abea4f2ebdc5')
         .send(validCreateUserDto);
     });
 
@@ -222,7 +224,7 @@ describe('PUT api/users/{userId}', () => {
 
     beforeAll(async () => {
       putResponse = await request
-        .put('/api/users/invalid')
+        .put('/api/users/invalid_id')
         .send(validCreateUserDto);
     });
 
@@ -261,7 +263,9 @@ describe('DELETE api/users/{userId}', () => {
     let deleteResponse: Response;
 
     beforeAll(async () => {
-      deleteResponse = await request.delete('/api/users/123');
+      deleteResponse = await request.delete(
+        '/api/users/070aaef9-45be-4650-8f4d-abea4f2ebdc5',
+      );
     });
 
     test('Should return status code 404', () => {
