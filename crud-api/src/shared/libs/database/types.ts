@@ -45,7 +45,7 @@ export type WorkerMessage = DbRequest & {
   requestId: RequestId;
 };
 
-export type DbResponse = {
+export type DbProcessResponse = {
   requestId: RequestId;
   data: Serializable;
 };

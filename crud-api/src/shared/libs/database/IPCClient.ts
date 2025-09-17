@@ -2,6 +2,7 @@ import {
   CollectionAction,
   CollectionName,
   DbProcess,
+  DbProcessResponse,
   EntityId,
   Payload,
 } from './types.js';
@@ -19,7 +20,9 @@ export class IPCClient {
     ...payload: Payload<A, T>
   ): Promise<unknown> {
     return new Promise((resolve) => {
-      this.dbProcess.once('message', (dbResponse) => resolve(dbResponse));
+      this.dbProcess.once('message', ({ data }: DbProcessResponse) =>
+        resolve(data),
+      );
       this.dbProcess.send?.({ collection, action, payload });
     });
   }

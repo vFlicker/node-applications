@@ -4,6 +4,7 @@ import {
   Collection,
   CollectionAction,
   CollectionName,
+  DbProcessResponse,
   EntityId,
   Payload,
   RecordEntity,
@@ -94,10 +95,11 @@ process.on(
   'message',
   async ({ collection, action, payload, requestId }: WorkerMessage) => {
     try {
-      const result = await database.handleRequest(collection, action, payload);
-      process.send?.({ requestId, data: result });
+      const data = await database.handleRequest(collection, action, payload);
+
+      process.send?.({ requestId, data } as DbProcessResponse);
     } catch (error) {
-      process.send?.({ requestId, error });
+      process.send?.({ requestId, data: error } as DbProcessResponse);
     }
   },
 );

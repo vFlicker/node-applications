@@ -2,7 +2,7 @@ import { ChildProcess } from 'node:child_process';
 import { Worker } from 'node:cluster';
 import { randomUUID } from 'node:crypto';
 
-import { DbRequest, DbResponse, RequestId } from './types.js';
+import { DbProcessResponse, DbRequest, RequestId } from './types.js';
 
 export class IPCManager {
   private databaseProcess: ChildProcess;
@@ -11,12 +11,17 @@ export class IPCManager {
   constructor(databaseProcess: ChildProcess) {
     this.databaseProcess = databaseProcess;
 
-    this.databaseProcess.on('message', ({ requestId, data }: DbResponse) => {
-      const serverWorker = this.workerRequests.get(requestId);
-      if (!serverWorker) return;
-      serverWorker.send(data ?? null);
-      this.workerRequests.delete(requestId);
-    });
+    this.databaseProcess.on(
+      'message',
+      (dbProcessResponse: DbProcessResponse) => {
+        const serverWorker = this.workerRequests.get(
+          dbProcessResponse.requestId,
+        );
+        if (!serverWorker) return;
+        serverWorker.send(dbProcessResponse ?? null);
+        this.workerRequests.delete(dbProcessResponse.requestId);
+      },
+    );
   }
 
   registerWorker(serverWorker: Worker): void {
