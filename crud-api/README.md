@@ -10,13 +10,15 @@ This project is a simple RESTful API built with Node.js and TypeScript. It demon
 - **src/shared/**
   - **config/** — Environment config and schema
   - **libs/**
-    - **rest/** — Custom REST server, routing, error handling
     - **database/** — In-memory database and IPC for clustering
+    - **dotenv-validator/** — Utilities to validate and parse environment variables according to typed schemas
+    - **rest/** — Custom REST server, routing, error handling
+    - **tests/** — Shared test utilities and helpers
     - **validator/** — Data validation utilities
 
 ## Features
 
-- REST API for user management (CRUD)
+- REST API (CRUD)
 - In-memory database with optional horizontal scaling (multi-process)
 - Custom HTTP server and routing (no Express)
 - Data validation and error handling
