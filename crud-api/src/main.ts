@@ -33,21 +33,17 @@ if (hasHorizontalScaling) {
 
     const serverWorkersCount = os.cpus().length - 1;
     for (let i = 0; i < serverWorkersCount; i++) {
-      const serverWorker = cluster.fork({ WORKER_PORT: appConfig.port + i });
+      const serverWorker = cluster.fork();
       ipcManager.registerWorker(serverWorker);
     }
   }
 
   if (cluster.isWorker) {
-    const WORKER_PORT = process.env.WORKER_PORT || 3000;
-
     const databaseClient = new DatabaseClient();
     const userService = new DefaultUserService(databaseClient);
     const userController = new UserController(userService);
 
-    const application = new Application({ ...appConfig, port: +WORKER_PORT }, [
-      userController,
-    ]);
+    const application = new Application(appConfig, [userController]);
 
     application.init();
   }
