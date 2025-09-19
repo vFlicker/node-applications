@@ -1,3 +1,8 @@
+import {
+  DefaultExceptionFilter,
+  HttpErrorFilter,
+  ValidationExceptionFilter,
+} from './shared/filters/index.js';
 import { Controller, RestServer } from './shared/libs/rest/index.js';
 
 interface AppConfig {
@@ -19,6 +24,12 @@ export class Application {
     const { host, port } = this.config;
 
     try {
+      this.server.registerExceptionFilters([
+        new ValidationExceptionFilter(),
+        new HttpErrorFilter(),
+        new DefaultExceptionFilter(),
+      ]);
+
       this.server.registerControllers(this.controllers);
       this.server.listen(port);
     } catch (err) {

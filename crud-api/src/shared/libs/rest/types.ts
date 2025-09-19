@@ -17,3 +17,8 @@ export type Route = {
   handler: RouteHandler;
   pattern?: RegExp | null;
 };
+
+export interface ExceptionFilter {
+  canHandle(error: unknown): boolean;
+  catch(res: ServerResponse, error: unknown): void;
+}
