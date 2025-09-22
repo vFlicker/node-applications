@@ -13,6 +13,16 @@ const createNewUser = async () => {
   console.log('Create User Response:', data);
 };
 
+const getProtectedUsers = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/protected-users');
+    const data = await response.json();
+    console.log('Get Users Response:', data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const getUsers = async () => {
   const response = await fetch('http://localhost:8000/api/users');
   const data = await response.json();
@@ -22,6 +32,7 @@ const getUsers = async () => {
 const main = async () => {
   await createNewUser();
   await getUsers();
+  await getProtectedUsers();
 };
 
 main();

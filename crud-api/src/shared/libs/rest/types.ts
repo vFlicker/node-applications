@@ -18,6 +18,7 @@ export type Route = {
   path: Path;
   method: HttpMethod;
   handler: RouteHandler;
+  middlewares?: Middleware[];
   pattern?: RegExp | null;
 };
 

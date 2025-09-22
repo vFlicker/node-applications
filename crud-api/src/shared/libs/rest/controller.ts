@@ -1,7 +1,7 @@
 import { HttpStatusCode } from './enums.js';
 import { BadRequestException } from './errors/bad-request.exception.js';
 import { Router } from './router.js';
-import { Client, RouteHandler } from './types.js';
+import { Client, Middleware, RouteHandler } from './types.js';
 
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -30,20 +30,52 @@ export abstract class Controller {
     });
   }
 
-  protected get(path: string, handler: RouteHandler): void {
-    this.router.get(path, handler.bind(this));
+  protected get(
+    path: string,
+    ...handlers: (Middleware | RouteHandler)[]
+  ): void {
+    this.router.get(
+      path,
+      ...handlers.map((handler) =>
+        typeof handler === 'function' ? handler.bind(this) : handler,
+      ),
+    );
   }
 
-  protected post(path: string, handler: RouteHandler): void {
-    this.router.post(path, handler.bind(this));
+  protected post(
+    path: string,
+    ...handlers: (Middleware | RouteHandler)[]
+  ): void {
+    this.router.post(
+      path,
+      ...handlers.map((handler) =>
+        typeof handler === 'function' ? handler.bind(this) : handler,
+      ),
+    );
   }
 
-  protected put(path: string, handler: RouteHandler): void {
-    this.router.put(path, handler.bind(this));
+  protected put(
+    path: string,
+    ...handlers: (Middleware | RouteHandler)[]
+  ): void {
+    this.router.put(
+      path,
+      ...handlers.map((handler) =>
+        typeof handler === 'function' ? handler.bind(this) : handler,
+      ),
+    );
   }
 
-  protected delete(path: string, handler: RouteHandler): void {
-    this.router.delete(path, handler.bind(this));
+  protected delete(
+    path: string,
+    ...handlers: (Middleware | RouteHandler)[]
+  ): void {
+    this.router.delete(
+      path,
+      ...handlers.map((handler) =>
+        typeof handler === 'function' ? handler.bind(this) : handler,
+      ),
+    );
   }
 
   protected send<T>(client: Client, statusCode: HttpStatusCode, data: T): void {
