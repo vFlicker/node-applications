@@ -1,6 +1,9 @@
 import { ServerResponse } from 'node:http';
 
-import { ExceptionFilter, ValidationException } from '../libs/rest/index.js';
+import {
+  ExceptionFilter,
+  ValidationException,
+} from '#src/shared/libs/rest/index.js';
 
 export class ValidationExceptionFilter implements ExceptionFilter {
   public canHandle(error: unknown): boolean {

@@ -4,6 +4,7 @@ import {
   ValidationExceptionFilter,
 } from './shared/filters/index.js';
 import { Controller, RestServer } from './shared/libs/rest/index.js';
+import { CorsMiddleware } from './shared/middlewares/cors.middleware.js';
 
 interface AppConfig {
   host: string;
@@ -24,6 +25,10 @@ export class Application {
     const { host, port } = this.config;
 
     try {
+      this.server.registerMiddlewares([
+        new CorsMiddleware(['http://127.0.0.1:5500']),
+      ]);
+
       this.server.registerExceptionFilters([
         new ValidationExceptionFilter(),
         new HttpErrorFilter(),

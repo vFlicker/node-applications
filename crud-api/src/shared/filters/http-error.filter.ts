@@ -1,6 +1,6 @@
 import { ServerResponse } from 'node:http';
 
-import { ExceptionFilter, HttpError } from '../libs/rest/index.js';
+import { ExceptionFilter, HttpError } from '#src/shared/libs/rest/index.js';
 
 export class HttpErrorFilter implements ExceptionFilter {
   public canHandle(error: unknown): boolean {
