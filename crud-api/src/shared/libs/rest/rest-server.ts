@@ -2,8 +2,9 @@ import { createServer, Server, ServerResponse } from 'node:http';
 
 import { RestClient } from './client.js';
 import { Controller } from './controller.js';
+import { executeMiddlewareChain } from './execute-middleware-chain.js';
 import { Routing } from './routing.js';
-import { Client, ExceptionFilter, Middleware } from './types.js';
+import { ExceptionFilter, Middleware } from './types.js';
 
 export class RestServer {
   private server: Server | null = null;
@@ -18,31 +19,17 @@ export class RestServer {
       try {
         const client = new RestClient(res, req);
 
-        await this.executeMiddlewaresChain(client, async () => {
-          await this.routing.processRoute(client);
-        });
+        await executeMiddlewareChain(
+          this.globalMiddlewares,
+          client,
+          async () => {
+            await this.routing.processRoute(client);
+          },
+        );
       } catch (err) {
         this.handleException(res, err);
       }
     });
-  }
-
-  private async executeMiddlewaresChain(
-    client: Client,
-    finalHandler: () => Promise<void>,
-  ): Promise<void> {
-    const middlewares = [...this.globalMiddlewares];
-
-    const executeNext = async (index: number): Promise<void> => {
-      if (index < middlewares.length) {
-        const currentMiddleware = middlewares[index];
-        await currentMiddleware.execute(client, () => executeNext(index + 1));
-      } else {
-        await finalHandler();
-      }
-    };
-
-    await executeNext(0);
   }
 
   private handleException(res: ServerResponse, error: unknown): void {

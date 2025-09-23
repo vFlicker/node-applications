@@ -1,7 +1,7 @@
 import { HttpStatusCode } from './enums.js';
 import { BadRequestException } from './errors/bad-request.exception.js';
 import { Router } from './router.js';
-import { Client, Middleware, RouteHandler } from './types.js';
+import { Client, RouteHandlerArray } from './types.js';
 
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -30,57 +30,24 @@ export abstract class Controller {
     });
   }
 
-  protected get(
-    path: string,
-    ...handlers: (Middleware | RouteHandler)[]
-  ): void {
-    this.router.get(
-      path,
-      ...handlers.map((handler) =>
-        typeof handler === 'function' ? handler.bind(this) : handler,
-      ),
-    );
+  protected get(path: string, ...handlers: RouteHandlerArray): void {
+    this.router.get(path, ...this.prepareHandlers(handlers));
   }
 
-  protected post(
-    path: string,
-    ...handlers: (Middleware | RouteHandler)[]
-  ): void {
-    this.router.post(
-      path,
-      ...handlers.map((handler) =>
-        typeof handler === 'function' ? handler.bind(this) : handler,
-      ),
-    );
+  protected post(path: string, ...handlers: RouteHandlerArray): void {
+    this.router.post(path, ...this.prepareHandlers(handlers));
   }
 
-  protected put(
-    path: string,
-    ...handlers: (Middleware | RouteHandler)[]
-  ): void {
-    this.router.put(
-      path,
-      ...handlers.map((handler) =>
-        typeof handler === 'function' ? handler.bind(this) : handler,
-      ),
-    );
+  protected put(path: string, ...handlers: RouteHandlerArray): void {
+    this.router.put(path, ...this.prepareHandlers(handlers));
   }
 
-  protected delete(
-    path: string,
-    ...handlers: (Middleware | RouteHandler)[]
-  ): void {
-    this.router.delete(
-      path,
-      ...handlers.map((handler) =>
-        typeof handler === 'function' ? handler.bind(this) : handler,
-      ),
-    );
+  protected delete(path: string, ...handlers: RouteHandlerArray): void {
+    this.router.delete(path, ...this.prepareHandlers(handlers));
   }
 
-  protected send<T>(client: Client, statusCode: HttpStatusCode, data: T): void {
-    client.res.writeHead(statusCode, DEFAULT_HEADERS);
-    client.res.end(JSON.stringify(data));
+  private prepareHandlers(handlers: RouteHandlerArray): RouteHandlerArray {
+    return handlers.map((handler) => handler.bind(this));
   }
 
   protected created<T>(client: Client, data: T): void {
@@ -92,8 +59,7 @@ export abstract class Controller {
   }
 
   protected noContent(client: Client): void {
-    client.res.writeHead(HttpStatusCode.NoContent);
-    client.res.end();
+    this.send(client, HttpStatusCode.NoContent, null);
   }
 
   protected badRequest(client: Client, errors: unknown): void {
@@ -102,5 +68,11 @@ export abstract class Controller {
 
   protected notFound(client: Client, errors: unknown): void {
     this.send(client, HttpStatusCode.NotFound, errors);
+  }
+
+  protected send<T>(client: Client, statusCode: HttpStatusCode, data: T): void {
+    client.setResponseHeaders(DEFAULT_HEADERS);
+    client.setStatusCode(statusCode);
+    client.sendResponse(data);
   }
 }

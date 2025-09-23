@@ -7,7 +7,7 @@ import {
   ValidationException,
 } from '#src/shared/libs/rest/index.js';
 import { validate } from '#src/shared/libs/validator/index.js';
-import { AuthMiddleware } from '#src/shared/middlewares/auth.middleware.js';
+import { authMiddleware } from '#src/shared/middlewares/index.js';
 
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -21,7 +21,7 @@ export class UserController extends Controller {
 
     this.post('/api/users', this.create);
     this.get('/api/users', this.getAll);
-    this.get('/api/protected-users', new AuthMiddleware(), this.getAll);
+    this.get('/api/protected-users', authMiddleware(), this.getAll);
     this.get('/api/users/*', this.getById);
     this.put('/api/users/*', this.updateById);
     this.delete('/api/users/*', this.deleteById);

@@ -1,7 +1,8 @@
 import { HttpMethod } from './enums.js';
 import { NotFoundException } from './errors/not-found.exception.js';
+import { executeMiddlewareChain } from './execute-middleware-chain.js';
 import { Router } from './router.js';
-import { Client, Middleware, Params, Route } from './types.js';
+import { Client, Params, Route } from './types.js';
 
 export class Routing {
   // We can use Trie data structure to optimize the routing process,
@@ -30,7 +31,8 @@ export class Routing {
   }
 
   public async processRoute(client: Client): Promise<string | void> {
-    const { url = '', method } = client.req;
+    const url = client.getUrl();
+    const method = client.getMethod();
     const httpMethod = this.getHttpMethod(method);
 
     const route = this.findMatchingRoute(url, httpMethod);
@@ -39,9 +41,14 @@ export class Routing {
     const { handler, pattern, middlewares = [] } = route;
     const params = pattern ? this.extractParams(url, pattern) : null;
 
-    await this.executeMiddlewaresChain(middlewares, client, async () => {
-      await handler(client, params);
-    });
+    await executeMiddlewareChain(
+      middlewares,
+      client,
+      async () => {
+        await handler(client, params);
+      },
+      params,
+    );
   }
 
   private getHttpMethod(method?: string): HttpMethod {
@@ -71,22 +78,5 @@ export class Routing {
 
     match.shift();
     return match;
-  }
-
-  private async executeMiddlewaresChain(
-    middlewares: Middleware[],
-    client: Client,
-    finalHandler: () => Promise<void>,
-  ): Promise<void> {
-    const executeNext = async (index: number): Promise<void> => {
-      if (index < middlewares.length) {
-        const currentMiddleware = middlewares[index];
-        await currentMiddleware.execute(client, () => executeNext(index + 1));
-      } else {
-        await finalHandler();
-      }
-    };
-
-    await executeNext(0);
   }
 }

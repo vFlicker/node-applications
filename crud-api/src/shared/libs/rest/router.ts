@@ -1,37 +1,37 @@
 import { HttpMethod } from './enums.js';
-import { Middleware, Route, RouteHandler } from './types.js';
+import { Middleware, Route, RouteHandler, RouteHandlerArray } from './types.js';
 
 export class Router {
   public readonly routes: Route[] = [];
 
-  public get(path: string, ...handlers: (Middleware | RouteHandler)[]): void {
-    const middlewares = handlers.slice(0, -1) as Middleware[];
-    const handler = handlers[handlers.length - 1] as RouteHandler;
-    this.addRoute({ path, method: HttpMethod.Get, handler, middlewares });
+  public get(path: string, ...handlers: RouteHandlerArray): void {
+    this.registerRoute(path, HttpMethod.Get, handlers);
   }
 
-  public post(path: string, ...handlers: (Middleware | RouteHandler)[]): void {
-    const middlewares = handlers.slice(0, -1) as Middleware[];
-    const handler = handlers[handlers.length - 1] as RouteHandler;
-    this.addRoute({ path, method: HttpMethod.Post, handler, middlewares });
+  public post(path: string, ...handlers: RouteHandlerArray): void {
+    this.registerRoute(path, HttpMethod.Post, handlers);
   }
 
-  public put(path: string, ...handlers: (Middleware | RouteHandler)[]): void {
-    const middlewares = handlers.slice(0, -1) as Middleware[];
-    const handler = handlers[handlers.length - 1] as RouteHandler;
-    this.addRoute({ path, method: HttpMethod.Put, handler, middlewares });
+  public put(path: string, ...handlers: RouteHandlerArray): void {
+    this.registerRoute(path, HttpMethod.Put, handlers);
   }
 
-  public delete(
+  public delete(path: string, ...handlers: RouteHandlerArray): void {
+    this.registerRoute(path, HttpMethod.Delete, handlers);
+  }
+
+  private registerRoute(
     path: string,
-    ...handlers: (Middleware | RouteHandler)[]
+    method: HttpMethod,
+    handlers: RouteHandlerArray,
   ): void {
-    const middlewares = handlers.slice(0, -1) as Middleware[];
-    const handler = handlers[handlers.length - 1] as RouteHandler;
-    this.addRoute({ path, method: HttpMethod.Delete, handler, middlewares });
-  }
+    if (handlers.length === 0) {
+      throw new Error(`No handlers provided for route: ${method} ${path}`);
+    }
 
-  private addRoute(route: Route): void {
-    this.routes.push(route);
+    const handler = handlers[handlers.length - 1] as RouteHandler;
+    const middlewares = handlers.slice(0, -1) as Middleware[];
+
+    this.routes.push({ path, method, handler, middlewares });
   }
 }

@@ -1,11 +1,10 @@
 import {
-  Client,
   Middleware,
   UnauthorizedAccessException,
 } from '#src/shared/libs/rest/index.js';
 
-export class AuthMiddleware implements Middleware {
-  public execute(client: Client, next: () => Promise<void>): Promise<void> {
+export const authMiddleware = (): Middleware => {
+  return async (client, _params, next) => {
     const token = client.getRequestHeader('Authorization');
 
     if (!token) {
@@ -15,5 +14,5 @@ export class AuthMiddleware implements Middleware {
     }
 
     return next();
-  }
-}
+  };
+};

@@ -1,16 +1,10 @@
-import { Client, Middleware } from '#src/shared/libs/rest/index.js';
+import { Middleware } from '#src/shared/libs/rest/index.js';
 
-export class CorsMiddleware implements Middleware {
-  private readonly allowedOrigins: string[];
-
-  constructor(allowedOrigins: string[] = []) {
-    this.allowedOrigins = allowedOrigins;
-  }
-
-  public execute(client: Client, next: () => Promise<void>): Promise<void> {
+export const corsMiddleware = (allowedOrigins: string[]): Middleware => {
+  return async (client, _params, next) => {
     const origin = client.getRequestHeader('Origin');
 
-    if (origin && this.allowedOrigins.includes(origin)) {
+    if (origin && allowedOrigins.includes(origin)) {
       client.setResponseHeader('Access-Control-Allow-Origin', origin);
       client.setResponseHeader(
         'Access-Control-Allow-Headers',
@@ -29,5 +23,5 @@ export class CorsMiddleware implements Middleware {
     }
 
     return next();
-  }
-}
+  };
+};
