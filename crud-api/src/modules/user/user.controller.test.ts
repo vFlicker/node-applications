@@ -104,6 +104,24 @@ describe('GET api/users', () => {
   });
 });
 
+describe('GET api/protected-users', () => {
+  describe('API returns 401', () => {
+    let response: Response;
+
+    beforeAll(async () => {
+      response = await request.get('/api/protected-users');
+    });
+
+    test('Should return status code 401', () => {
+      expect(response.status).toBe(401);
+    });
+
+    test('Should return error message', () => {
+      expect(response.body).toEqual({ message: 'Unauthorized' });
+    });
+  });
+});
+
 describe('GET api/users/{userId}', () => {
   describe('API returns user by id', () => {
     let postResponse: Response;
@@ -255,7 +273,7 @@ describe('DELETE api/users/{userId}', () => {
     });
 
     test('Should return empty body', () => {
-      expect(deleteResponse.body).toEqual({});
+      expect(deleteResponse.body).toEqual('');
     });
   });
 

@@ -8,9 +8,7 @@ export const authMiddleware = (): Middleware => {
     const token = client.getRequestHeader('Authorization');
 
     if (!token) {
-      return Promise.reject(
-        new UnauthorizedAccessException('No token provided'),
-      );
+      return Promise.reject(new UnauthorizedAccessException('Unauthorized'));
     }
 
     return next();
