@@ -47,8 +47,12 @@ if (hasHorizontalScaling) {
     const databaseClient = new DatabaseClient();
     const userService = new DefaultUserService(databaseClient);
     const userController = new UserController(userService);
+    const authController = new AuthController();
 
-    const application = new Application(appConfig, [userController]);
+    const application = new Application(appConfig, [
+      authController,
+      userController,
+    ]);
 
     application.init();
   }
