@@ -5,9 +5,8 @@ import {
 
 export const authMiddleware = (): Middleware => {
   return async (client, _params, next) => {
-    const token = client.getRequestHeader('Authorization');
-
-    if (!token) {
+    const session = client.getSession();
+    if (!session) {
       return Promise.reject(new UnauthorizedAccessException('Unauthorized'));
     }
 

@@ -6,4 +6,5 @@ export * from './errors/not-found.exception.js';
 export * from './errors/unauthorized-access.exception.js';
 export * from './errors/validation.exception.js';
 export * from './rest-server.js';
+export * from './session/session.js';
 export * from './types.js';

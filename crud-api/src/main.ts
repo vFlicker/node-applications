@@ -2,6 +2,7 @@ import cluster from 'node:cluster';
 import os from 'node:os';
 
 import { Application } from './application.js';
+import { AuthController } from './modules/auth/index.js';
 import { DefaultUserService, UserController } from './modules/user/index.js';
 import { RestConfig } from './shared/config/index.js';
 import { createDatabaseProcess } from './shared/libs/database/createDatabaseProcess.js';
@@ -20,8 +21,12 @@ if (!hasHorizontalScaling) {
   const inMemoryDatabase = new DatabaseClient(databaseProcess);
   const userService = new DefaultUserService(inMemoryDatabase);
   const userController = new UserController(userService);
+  const authController = new AuthController();
 
-  const application = new Application(appConfig, [userController]);
+  const application = new Application(appConfig, [
+    authController,
+    userController,
+  ]);
 
   application.init();
 }

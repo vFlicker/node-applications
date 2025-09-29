@@ -24,7 +24,7 @@ export class Application {
     this.controllers = controllers;
   }
 
-  public init(): void {
+  public async init(): Promise<void> {
     const { host, port } = this.config;
 
     try {
@@ -39,7 +39,7 @@ export class Application {
         new DefaultExceptionFilter(),
       ]);
 
-      this.server.registerControllers(this.controllers);
+      await this.server.registerControllers(this.controllers);
       this.server.listen(port);
     } catch (err) {
       console.error('Error starting server:', err);

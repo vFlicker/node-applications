@@ -1,0 +1,15 @@
+# Login
+POST http://localhost:8000/api/login
+
+###
+
+# Logout
+POST http://localhost:8000/api/logout
+
+###
+
+# Get protected data
+
+GET http://localhost:8000/api/protected
+
+###

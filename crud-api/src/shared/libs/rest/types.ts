@@ -2,9 +2,24 @@ import { IncomingMessage, ServerResponse } from 'http';
 
 import { HttpMethod, HttpStatusCode } from './enums.js';
 
+export type SerializedSession = {
+  token: string;
+};
+
+export interface Session {
+  save(): void;
+}
+
 export interface Client {
   res: ServerResponse;
   req: IncomingMessage;
+  setToken(token: string): void;
+  getToken(): string | undefined;
+  deleteToken(): void;
+  setSession(session: Session): void;
+  getSession(): Session | null;
+  deleteSession(): void;
+  saveSession(): void;
   sendResponse<T>(data: T): void;
   getUrl(): string;
   getMethod(): string;
@@ -13,8 +28,10 @@ export interface Client {
   setResponseHeader(name: string, value: string): void;
   setResponseHeaders(headers: Record<string, string>): void;
   setStatusCode(statusCode: HttpStatusCode): void;
-  getQueryParam(name: string): string | null;
-  getQueryParams(): URLSearchParams;
+  setCookie(name: string, val: string, httpOnly?: boolean): void;
+  getCookie(name: string): string | undefined;
+  deleteCookie(name: string): void;
+  sendCookie(): void;
 }
 
 export type Params = RegExpMatchArray | null;

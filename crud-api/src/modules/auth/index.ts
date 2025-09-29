@@ -1,1 +1,1 @@
-// Auth module
+export * from './auth.controller.js';

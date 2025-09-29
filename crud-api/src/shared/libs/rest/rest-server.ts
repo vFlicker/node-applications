@@ -12,12 +12,12 @@ export class RestServer {
   private readonly globalMiddlewares: Middleware[] = [];
   private readonly exceptionFilters: ExceptionFilter[] = [];
 
-  public registerControllers(controllers: Controller[]): void {
+  public async registerControllers(controllers: Controller[]): Promise<void> {
     this.routing.registerRouters(controllers.map(({ router }) => router));
 
     this.server = createServer(async (req, res) => {
       try {
-        const client = new RestClient(res, req);
+        const client = await RestClient.getInstance(req, res);
 
         await executeMiddlewareChain(
           this.globalMiddlewares,
@@ -26,6 +26,8 @@ export class RestServer {
             await this.routing.processRoute(client);
           },
         );
+
+        res.on('finish', () => client.saveSession());
       } catch (err) {
         this.handleException(res, err);
       }
@@ -38,6 +40,12 @@ export class RestServer {
         filter.catch(res, error);
         return;
       }
+    }
+
+    if (!res.headersSent) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Internal Server Error' }));
     }
   }
 
