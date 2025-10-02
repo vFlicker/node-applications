@@ -1,38 +1,8 @@
-const createNewUser = async () => {
-  const response = await fetch('http://localhost:8000/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      username: 'John Doe',
-      age: 30,
-      hobbies: ['reading', 'coding'],
-    }),
-  });
-
-  const data = await response.json();
-  console.log('Create User Response:', data);
-};
-
-const getProtectedUsers = async () => {
-  try {
-    const response = await fetch('http://localhost:8000/api/protected-users');
-    const data = await response.json();
-    console.log('Get Users Response:', data);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const getUsers = async () => {
-  const response = await fetch('http://localhost:8000/api/users');
-  const data = await response.json();
-  console.log('Get Users Response:', data);
-};
+import { checkProtectedRoute, checkUsersRoute } from './scenarios.js';
 
 const main = async () => {
-  await createNewUser();
-  await getUsers();
-  await getProtectedUsers();
+  await checkUsersRoute();
+  await checkProtectedRoute();
 };
 
 main();

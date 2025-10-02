@@ -17,7 +17,7 @@ export class RestSession implements Session {
     client.setToken(token);
     const newSession = new RestSession(token);
     client.setSession(newSession);
-    client.setCookie('token', token);
+    client.setCookie('token', token, true);
     sessionStorage.set(token, { token });
     return newSession;
   }

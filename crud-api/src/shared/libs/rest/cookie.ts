@@ -28,6 +28,9 @@ export class Cookie {
     const expires = `expires=${COOKIE_EXPIRE}`;
     let cookie = `${name}=${val}; ${expires}; Path=/; Domain=${this.host}`;
     if (httpOnly) cookie += '; HttpOnly';
+    const sameSite = 'SameSite=None';
+    const secure = 'Secure';
+    cookie += `; ${sameSite}; ${secure}`;
     this.preparedCookies.push(cookie);
   }
 

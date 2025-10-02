@@ -29,7 +29,7 @@ export class Application {
 
     try {
       this.server.registerMiddlewares([
-        corsMiddleware(['http://127.0.0.1:5500']),
+        corsMiddleware(['http://localhost:3000', 'http://192.168.1.10:3000']),
         loggingMiddleware(),
       ]);
 
