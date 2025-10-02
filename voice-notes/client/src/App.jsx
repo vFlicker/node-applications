@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
 import useAudioRecorder from "./useAudioRecorder";
 import useSocket from "./useSocket";
 
@@ -10,25 +9,7 @@ import useSocket from "./useSocket";
 // NOTE: Don't use createPortal()
 
 function App() {
-  const { initialize, configureStream, incomingAudio, disconnect, socket } =
-    useSocket();
-  const [temporaryText, setTemporaryText] = useState("");
-  const [text, setText] = useState("");
-
-  useEffect(() => {
-    socket.addEventListener("partial", (textPart) => {
-      setTemporaryText((prev) => `${prev} ${textPart}`);
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.addEventListener("final", (finalText) => {
-      if (finalText !== "") {
-        setText((prevText) => `${prevText} ${finalText}`);
-        setTemporaryText("");
-      }
-    });
-  }, []);
+  const { initialize } = useSocket();
 
   useEffect(() => {
     // Note: must connect to server on page load but don't start transcriber
@@ -36,40 +17,20 @@ function App() {
   }, []);
 
   const { startRecording, stopRecording, isRecording } = useAudioRecorder({
-    dataCb: (data) => {
-      incomingAudio(data);
-    },
+    dataCb: (data) => {},
   });
 
   const onStartRecordingPress = async () => {
     // start recorder and transcriber (send configure-stream)
-    const simpleRate = await startRecording();
-    configureStream(simpleRate);
   };
 
-  const onStopRecordingPress = async () => {
-    stopRecording();
-    disconnect();
-  };
-
-  const value = `${text} ${temporaryText}`;
+  const onStopRecordingPress = async () => {};
 
   // ... add more functions
   return (
     <div>
       <h1>Speechify Voice Notes</h1>
       <p>Record or type something in the textbox.</p>
-
-      <div>
-        <textarea value={value}></textarea>
-        <div>
-          <button
-            onClick={isRecording ? onStopRecordingPress : onStartRecordingPress}
-          >
-            {isRecording ? "Stop recording" : "Start Recording"}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
